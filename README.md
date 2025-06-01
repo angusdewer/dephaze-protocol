@@ -4,9 +4,8 @@
 Angus Dewer
 
 ---
-
-## Overview  
-The Dephaze Protocol introduces a novel framework that models reality as a complex phase field (Ψ) governed by a universal main equation. This approach integrates ideas from physics, resonance theory, and consciousness studies to describe the evolution and interaction of phase states through space and time.
+Overview
+The Dephaze Protocol introduces a novel framework that models reality as a complex phase field (Ψ), where the universal main equation provides insight into the underlying dynamics. This approach integrates ideas from physics, resonance theory, and consciousness studies to describe the evolution and interaction of phase states through space and time.
 
 ---
 
