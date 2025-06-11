@@ -3,7 +3,8 @@
 
 ## Overview
 
-The Dephaze Protocol models phase state dynamics through a nonlinear partial differential equation incorporating spatial distortion, resonance amplification, decoherence, and global coupling via Gaussian kernels. This approach allows a novel representation of phase fields and their evolution in a physically meaningful way.
+The Dephaze Protocol models phase state dynamics through a nonlinear partial differential equation incorporating spatial distortion, resonance amplification, decoherence, and global coupling via Gaussian kernels. This approach allows a novel representation of phase fields and their evolution in a physically meaningful way.Find answers to your questions at:  
+[https://dephaze.com/](https://dephaze.com/)
 
 ---
 
