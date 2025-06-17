@@ -11,31 +11,48 @@ Find answers to your questions at:
 
 ---
 
-## Main Equation
+**Main equation:**
 
 \[
-\Psi' = \frac{\partial^2 \Psi}{\partial x^2} + \alpha \Psi^3 - \beta \Psi +  
-\left( \sum_{k=1}^N \frac{1}{1 + e^{-k(|\Psi| - \Psi_{crit})}} \cdot \gamma_{max} \right) \left( \int_{\Omega} \frac{1}{2 \pi \sigma^2} e^{-\frac{|x - x'|^2}{2 \sigma^2}} |\Psi(x')|^2 dx' \right) \Psi  
-- \delta(t) \lim_{t \to t_0^-} \frac{\partial \Psi}{\partial t} + \theta_{auto}(x,t) \left[ \Omega_{adaptive}(x,t) - \nabla \cdot F(\Psi) \right]
+\frac{\partial \Psi}{\partial t} = \frac{\partial^2 \Psi}{\partial x^2} + \alpha \Psi^3 - \beta \Psi + \Gamma(\Psi) \cdot N(\Psi) \cdot \Psi - \delta(t - t_0) \cdot \lim_{t \to t_0^-} \left(\frac{\partial \Psi}{\partial t}\right) + \Phi_{Au}(t) \cdot \left[\Omega(x,t) - \nabla \cdot F(\Psi)\right] - \kappa(t) \cdot (\Psi - \Psi_s(t))
 \]
 
 ---
 
-## Parameters
+**Parameter explanations:**
 
-- **Ψ**: Phase state  
-- **Ψ'**: Phase velocity (time derivative of Ψ)  
-- **∂²Ψ/∂x²**: Spatial curvature or distortion (second spatial derivative)  
-- **αΨ³**: Resonance amplification (nonlinear term)  
-- **βΨ**: Decoherence/damping  
-- **Ψ_crit**: Critical resonance threshold  
-- **γ_max**: Maximum resonance gain  
-- **σ**: Spatial locality (Gaussian kernel width)  
-- **Ω**: Phase domain (integration region)  
-- **δ(t)**: Temporal delta term (limit from past)  
-- **θ_auto(x,t)**: Adaptive auto-regulation function  
-- **Ω_adaptive(x,t)**: Adaptive domain  
-- **F(Ψ)**: Vector function of phase field Ψ  
+- **Ψ = Ψ(x,t):** The phase field state function, a complex amplitude representing the system's phase at position *x* and time *t*.
+
+- **∂Ψ/∂t:** Time derivative of Ψ; rate of change of the phase field over time.
+
+- **∂²Ψ/∂x²:** Second spatial derivative of Ψ; represents spatial diffusion or smoothing of the phase field.
+
+- **α Ψ³:** Nonlinear self-interaction term modeling coherence and self-organization in the phase field.
+
+- **−β Ψ:** Linear damping term representing attenuation or dissipation in the system.
+
+- **Γ(Ψ):** Configuration-dependent scaling function adjusting nonlinear effects.
+
+- **N(Ψ):** Nonlinear operator modeling complex interactions or external modulations on the phase field.
+
+- **δ(t − t₀):** Dirac delta function representing an instantaneous event at time *t₀*.
+
+- **limₜ→ₜ₀⁻ (∂Ψ/∂t):** Left-limit of the time derivative at *t₀* ensuring controlled discontinuity at the event.
+
+- **Φₐᵤ(t):** Golden-ratio based gate control function representing the physical SignalGate modulation.
+
+- **Ω(x,t):** External phase modulation field, space- and time-dependent.
+
+- **∇ · F(Ψ):** Divergence of phase flux; internal feedback forces within the phase field.
+
+- **κ(t):** Time-dependent stabilization coefficient controlling feedback to maintain stability.
+
+- **Ψₛ(t):** Stable reference phase state the system tries to maintain or return to.
+
+---
+
+**Summary:**  
+This equation models the dynamic evolution of the phase field Ψ incorporating spatial diffusion, nonlinear self-interactions, damping, sudden events, external modulation through a golden-ratio gate, and feedback stabilization toward a reference state.
 
 ---
 
