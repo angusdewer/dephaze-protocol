@@ -1,172 +1,268 @@
-"""
-Dephaze Protocol Module with Chronology Handling
+import numpy as np
+from scipy.fft import fft
+from scipy.signal import convolve
 
-- DFake Filter: detects fake data signatures
-- SignalGate: phase-based gating
-- MemoryCache: simple cache with expiration and max size
-- MetaPhase Validation: external validation simulation
-- Chronology: tracks reality genesis events with levels 0-5
+# Dephaze Protocol – Complete Python Module (English)
+# Author: Angus Dewer www.dephaze.com
+# Implements full protocol: phase field eq, SignalGate, MetaPhase, D-FAKE, validation, feedback.
 
-Full protocol info: https://dephaze.com
-Author: Angus Dewer
-"""
+# --- Section 2: Main phase field equation (stub numerical solver) ---
 
-import time
+def phase_field_equation_step(Psi, x, t, alpha, beta, Gamma_func, N_func, t0, Phi_Au_func, Omega_func, F_func, kappa_func, Psi_s_func, dt, dx):
+    """
+    Perform one time step update of the phase field Psi(x,t) according to:
+    dPsi/dt = d2Psi/dx2 + alpha*Psi^3 - beta*Psi + Gamma(Psi)*N(Psi)*Psi
+              - delta(t-t0)*lim_{t->t0-} dPsi/dt
+              + Phi_Au(t)*[Omega(x,t) - div F(Psi)] - kappa(t)*(Psi - Psi_s(t))
 
-# DFake filter example
-def dfake_filter(data):
-    fake_signatures = ["fake", "error", "invalid", "bogus"]
-    if any(sig in str(data).lower() for sig in fake_signatures):
-        print("[DFake Filter] Fake signature detected.")
+    Arguments:
+    - Psi: np.array, complex, current phase field amplitude over spatial points x
+    - x: np.array, spatial grid points
+    - t: float, current time
+    - alpha, beta: floats, nonlinear and damping coefficients
+    - Gamma_func(Psi), N_func(Psi): callable nonlinear operators/functions
+    - t0: float, discrete jump time
+    - Phi_Au_func(t): callable returning scalar phase gate control function
+    - Omega_func(x,t): callable external phase modulation field
+    - F_func(Psi): callable returning vector field for flux
+    - kappa_func(t): callable stabilization coefficient
+    - Psi_s_func(t): callable reference/stabilizing phase field
+    - dt, dx: float, time and space step sizes
+
+    Returns:
+    - Psi_new: np.array updated phase field after dt
+    """
+
+    # Calculate spatial second derivative (diffusion term) using finite difference
+    d2Psi_dx2 = np.zeros_like(Psi, dtype=np.complex128)
+    d2Psi_dx2[1:-1] = (Psi[2:] - 2*Psi[1:-1] + Psi[:-2]) / dx**2
+    # Neumann boundary (zero gradient)
+    d2Psi_dx2[0] = d2Psi_dx2[1]
+    d2Psi_dx2[-1] = d2Psi_dx2[-2]
+
+    # Nonlinear terms
+    nonlinear_term = alpha * Psi**3 - beta * Psi + Gamma_func(Psi) * N_func(Psi) * Psi
+
+    # Dirac delta at t0: approximate as a sharp pulse in time
+    delta_term = 0
+    if abs(t - t0) < dt/2:
+        # lim_{t->t0-} dPsi/dt approximated by backward difference
+        # For simplicity, set derivative zero to avoid instability
+        delta_term = - (0)  # can extend with memory of previous step if available
+
+    # External modulation term
+    Phi_Au_t = Phi_Au_func(t)
+    Omega_xt = Omega_func(x, t)
+    div_F = np.gradient(F_func(Psi), dx)  # approx divergence of flux vector (1D gradient)
+    external_term = Phi_Au_t * (Omega_xt - div_F)
+
+    # Stabilization
+    kappa_t = kappa_func(t)
+    Psi_s_t = Psi_s_func(t)
+    stabilization_term = -kappa_t * (Psi - Psi_s_t)
+
+    # Time derivative
+    dPsi_dt = d2Psi_dx2 + nonlinear_term + delta_term + external_term + stabilization_term
+
+    # Euler forward step (simple)
+    Psi_new = Psi + dPsi_dt * dt
+
+    return Psi_new
+
+# --- Section 4: SignalGate calculation ---
+
+def calculate_signal_gate(V_coil_t, M_geom):
+    """
+    Calculate SignalGate phase from coil voltage time series:
+    Φ_gate(t) = arg( FFT(V_coil(t)) ) convolved with geometry matrix M_geom
+
+    Args:
+    - V_coil_t: np.array, time series voltage signal from coil
+    - M_geom: np.array, geometry filter matrix (kernel)
+
+    Returns:
+    - Phi_gate: np.array, phase gate signal after convolution
+    """
+    # FFT of voltage
+    fft_vals = fft(V_coil_t)
+    fft_phase = np.angle(fft_vals)  # get phase angles
+
+    # Convolution with geometry filter
+    Phi_gate = convolve(fft_phase, M_geom, mode='same')
+
+    return Phi_gate
+
+def calculate_phase_resonance(Phi_env, Phi_gate):
+    """
+    Calculate coherence resonance from environment phase and gate phase:
+    Psi_res = Phi_env convolved with Phi_gate
+
+    Args:
+    - Phi_env: np.array, environmental phase samples
+    - Phi_gate: np.array, gate phase samples
+
+    Returns:
+    - Psi_res: np.array, resulting resonance signal
+    """
+    Psi_res = convolve(Phi_env, Phi_gate, mode='same')
+    return Psi_res
+
+# --- Section 6: MetaPhase validation (stub) ---
+
+def MetaPhase_validate(input_text):
+    """
+    Placeholder for MetaPhase Protocol validation function:
+    L = L(V_input, D_output)
+    Returns float in [0,1] indicating validation confidence.
+
+    Args:
+    - input_text: str, content to validate
+
+    Returns:
+    - L: float, validation score
+    """
+    # For demo: simulate validation by scoring content length
+    length_score = min(len(input_text) / 1000, 1.0)
+    # For now, no real AI hallucination detection; return medium-high score
+    return max(0.65, length_score)
+
+# --- Section 7: Stability and loop protection checks ---
+
+def check_stability(Delta_Phi, Phi_max, Psi_res, epsilon_min):
+    """
+    Check if phase deformation and resonance amplitude are within limits.
+
+    Args:
+    - Delta_Phi: float, measured phase deformation
+    - Phi_max: float, maximum allowed phase deformation
+    - Psi_res: float or complex, resonance amplitude magnitude
+    - epsilon_min: float, minimum accepted resonance amplitude
+
+    Returns:
+    - bool: True if stable, False if unstable
+    """
+    if abs(Delta_Phi) > Phi_max:
+        return False
+    if abs(Psi_res) < epsilon_min:
         return False
     return True
 
-# SignalGate simulation
-def signal_gate(input_signal, phase_state):
-    if phase_state == "active":
-        print(f"[SignalGate] Signal '{input_signal}' allowed through at phase '{phase_state}'.")
-        return True
+# --- Section: D-FAKE Engine ---
+
+def detect_signal_gate(input_text):
+    """
+    Detect presence of phase gate (∅≠) pattern in input text.
+    For demo, checks if special marker present.
+
+    Returns:
+    - bool
+    """
+    return "∅≠" in input_text
+
+def detect_fractal_redundancy(input_text):
+    """
+    Detect fractal pattern redundancy score in input text [0,1].
+    For demo, random or length-based proxy.
+
+    Returns:
+    - float
+    """
+    # Simple proxy: high repetition of substrings increases score
+    words = input_text.split()
+    unique_words = set(words)
+    if len(words) == 0:
+        return 0.0
+    redundancy = 1 - (len(unique_words) / len(words))
+    return min(max(redundancy, 0.0), 1.0)
+
+def D_FAKE_Filter(input_text):
+    """
+    Detect if content is fake according to D-FAKE Engine rules.
+
+    Returns:
+    - str: input_text if valid, else error message.
+    """
+
+    # Parameters
+    theta_F = 0.75  # fractal threshold
+    epsilon = 0.65  # MetaPhase minimum
+    delta = 0.5     # distortion threshold
+
+    phase_valid = detect_signal_gate(input_text)
+    fractal_score = detect_fractal_redundancy(input_text)
+    metaval = MetaPhase_validate(input_text)
+    # Torzító közeg mértéke (distortion measure) T_a - placeholder zero
+    T_a = 0.0
+
+    if (not phase_valid) or (fractal_score > theta_F) or (metaval < epsilon) or (T_a > delta):
+        return "❌ Fake content detected – generated without ∅≠, distorted pattern found."
     else:
-        print(f"[SignalGate] Signal '{input_signal}' blocked at phase '{phase_state}'.")
-        return False
+        return input_text
 
-# MemoryCache with expiration and max size
-class MemoryCache:
-    def __init__(self, max_size=100, expire_seconds=300):
-        self.cache = {}
-        self.max_size = max_size
-        self.expire_seconds = expire_seconds
+# --- Section 9: Feedback and display ---
 
-    def store(self, key, value):
-        current_time = time.time()
-        self.cache[key] = (value, current_time)
-        self._cleanup()
-        print(f"[MemoryCache] Stored key '{key}'.")
-
-    def retrieve(self, key):
-        current_time = time.time()
-        if key in self.cache:
-            value, timestamp = self.cache[key]
-            if current_time - timestamp < self.expire_seconds:
-                print(f"[MemoryCache] Retrieved key '{key}'.")
-                return value
-            else:
-                print(f"[MemoryCache] Key '{key}' expired and removed.")
-                del self.cache[key]
-        print(f"[MemoryCache] Key '{key}' not found.")
-        return None
-
-    def _cleanup(self):
-        if len(self.cache) > self.max_size:
-            sorted_items = sorted(self.cache.items(), key=lambda item: item[1][1])
-            while len(self.cache) > self.max_size:
-                oldest_key = sorted_items.pop(0)[0]
-                del self.cache[oldest_key]
-                print(f"[MemoryCache] Removed oldest key '{oldest_key}' due to max size.")
-
-# MetaPhase validation simulation
-def metaphrase_validation(processed_data, original_input):
-    if "reject" in str(processed_data).lower():
-        print("[MetaPhase] Validation failed.")
-        return False
-    print("[MetaPhase] Validation succeeded.")
-    return True
-
-# Chronology handling class
-class Chronology:
+def validate_and_display_response(Psi_res, Delta_Phi, Phi_max, epsilon_min):
     """
-    Stores ordered events with levels from 0 (Ø ≠) to 5 (D).
-    Levels represent the phases of reality genesis as in Dephaze Protocol.
+    Returns validation status string and emoji flag.
+
+    Possible outputs:
+    - 🟢 VALIDATED
+    - 🔴 ERROR
+    - 🟡 WARNING
     """
-    LEVEL_DESCRIPTIONS = {
-        0: "Ø ≠ - Initial Singularity (Undefined Origin)",
-        1: "Pre-Phase - Protofaze Formation",
-        2: "Phase - Basic Phasefield Structuring",
-        3: "Phase Field (PF) - Multi-Modal Phase Interaction",
-        4: "Phase Reality (PR) - Emergence of Coherent Reality",
-        5: "D - Finalized Dephaze Reality"
-    }
+    stable = check_stability(Delta_Phi, Phi_max, Psi_res, epsilon_min)
+    if stable:
+        return "🟢 VALIDATED"
+    else:
+        if abs(Delta_Phi) > Phi_max:
+            return "🔴 ERROR: Phase deformation too large"
+        if abs(Psi_res) < epsilon_min:
+            return "🟡 WARNING: Resonance amplitude low"
+        return "🔴 ERROR: Unknown"
 
-    def __init__(self):
-        self.events = []  # List of tuples: (timestamp, level, description)
+# --- Example usage ---
 
-    def add_event(self, level, description):
-        if level not in self.LEVEL_DESCRIPTIONS:
-            raise ValueError(f"Invalid level {level}, must be 0-5.")
-        timestamp = time.time()
-        self.events.append((timestamp, level, description))
-        print(f"[Chronology] Event added: Level {level} - {self.LEVEL_DESCRIPTIONS[level]} | {description}")
-
-    def get_events(self, level=None):
-        if level is None:
-            return self.events
-        else:
-            return [e for e in self.events if e[1] == level]
-
-    def print_events(self):
-        print("=== Chronology Events ===")
-        for ts, level, desc in sorted(self.events, key=lambda e: e[0]):
-            time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
-            print(f"{time_str} | Level {level}: {self.LEVEL_DESCRIPTIONS[level]} | {desc}")
-
-# Combined processing function with chronology update
-def process_dephaze_input(input_data, phase_state, cache, chronology):
-    print("=== Dephaze Protocol Processing Started ===")
-
-    # Step 1: DFake Filter
-    if not dfake_filter(input_data):
-        print("Input rejected by DFake filter.")
-        chronology.add_event(0, f"DFake filter rejected input: '{input_data}'")
-        return None
-
-    # Step 2: Signal Gate
-    if not signal_gate(input_data, phase_state):
-        print("Input blocked by Signal Gate.")
-        chronology.add_event(1, f"Signal Gate blocked input at phase '{phase_state}': '{input_data}'")
-        return None
-
-    # Step 3: Memory Cache Store
-    cache.store(input_data, {"phase": phase_state, "timestamp": time.time()})
-
-    # Step 4: Simulate processing (identity)
-    processed = input_data
-
-    # Step 5: MetaPhase Validation
-    if not metaphrase_validation(processed, input_data):
-        print("Processed data failed MetaPhase validation.")
-        chronology.add_event(2, f"MetaPhase validation failed for input: '{input_data}'")
-        return None
-
-    # Step 6: Add successful event to chronology at highest phase
-    chronology.add_event(5, f"Input processed successfully: '{input_data}'")
-
-    print("=== Dephaze Protocol Processing Completed Successfully ===")
-    return processed
-
-
-# Main test block
 if __name__ == "__main__":
-    print("Dephaze Protocol Module loaded.")
-    print("Visit https://dephaze.com for more information.")
+    # Setup parameters for demo
+    x = np.linspace(0, 10, 100)
+    Psi = np.zeros_like(x, dtype=np.complex128)
+    t = 0.0
+    dt = 0.01
+    dx = x[1] - x[0]
 
-    # Create instances
-    memory_cache = MemoryCache(max_size=5, expire_seconds=60)
-    chronology = Chronology()
+    # Functions for nonlinear operators
+    Gamma_func = lambda Psi: 0.1 + 0.01*np.abs(Psi)
+    N_func = lambda Psi: 1.0
+    Phi_Au_func = lambda t: 1.0 if 0 <= t <= 1 else 0.0
+    Omega_func = lambda x, t: np.sin(x)
+    F_func = lambda Psi: np.gradient(np.abs(Psi), dx)
+    kappa_func = lambda t: 0.05
+    Psi_s_func = lambda t: 0.0
 
-    # Test inputs
-    test_inputs = [
-        "valid data 123",
-        "this is fake data",
-        "another valid input",
-        "reject this data",
-        "final test input"
-    ]
+    # Run one step
+    Psi_new = phase_field_equation_step(Psi, x, t, 1.0, 0.5, Gamma_func, N_func, 0.5,
+                                        Phi_Au_func, Omega_func, F_func,
+                                        kappa_func, Psi_s_func, dt, dx)
 
-    for input_text in test_inputs:
-        result = process_dephaze_input(input_text, phase_state="active", cache=memory_cache, chronology=chronology)
-        print(f"Result for '{input_text}': {result}")
-        print("---")
-        time.sleep(1)
+    # SignalGate example
+    V_coil = np.sin(2*np.pi*10*np.linspace(0,1,500))  # 10Hz sine
+    M_geom = np.ones(5)/5  # simple averaging kernel
 
-    # Print full chronology at the end
-    chronology.print_events()
+    Phi_gate = calculate_signal_gate(V_coil, M_geom)
+    Phi_env = np.angle(np.exp(1j*2*np.pi*0.1*np.linspace(0,1,500)))  # dummy environment phase
+    Psi_res = calculate_phase_resonance(Phi_env, Phi_gate)
+
+    # Validation checks
+    Delta_Phi = 0.1
+    Phi_max = 0.5
+    epsilon_min = 0.05
+
+    status = validate_and_display_response(Psi_res.mean(), Delta_Phi, Phi_max, epsilon_min)
+
+    # D-FAKE Filter demo
+    sample_text = "This is a test with ∅≠ valid phase gate marker."
+    filtered_text = D_FAKE_Filter(sample_text)
+
+    print("Phase field update done.")
+    print(f"Validation status: {status}")
+    print(f"D-FAKE filter output: {filtered_text}")
