@@ -1,69 +1,72 @@
-# Dephaze Protocol
+# Dephaze Protocol Python Module
 
-## Overview
-
-The Dephaze Protocol introduces a novel framework that models reality as a complex phase field (Ψ) governed by a universal main equation. This approach integrates ideas from physics, resonance theory, and consciousness studies to describe the evolution and interaction of phase states through space and time. Find answers to your questions at:  
-[https://dephaze.com/](https://dephaze.com/)
+**Author:** Angus Dewer  
+**Website:** [https://dephaze.com](https://dephaze.com)  
 
 ---
 
-## Main Equation
+## Description
 
-\[
-\Psi' = \frac{\partial^2 \Psi}{\partial x^2} + \alpha \Psi^3 - \beta \Psi +  
-\left(\sum_{k=1}^{N} \frac{1}{1 + e^{-k(|\Psi| - \Psi_{crit})}} \cdot \gamma_{max}\right) \left(\int_{\Omega} \frac{1}{2\pi \sigma^2} e^{-\frac{|x - x'|^2}{2\sigma^2}} |\Psi(x')|^2 dx' \right) \Psi  
-- \delta(t) \lim_{t \to t_0^-} \frac{\partial \Psi}{\partial t} + \theta_{auto}(x,t) \left[ \Omega_{adaptive}(x,t) - \nabla \cdot F(\Psi) \right]
-\]
-
-### Parameters:
-
-- **Ψ**: Phase state  
-- **Ψ'**: Phase velocity (time derivative of Ψ)  
-- **∂²Ψ/∂x²**: Spatial curvature or distortion (second spatial derivative)  
-- **αΨ³**: Resonance amplification (nonlinear term)  
-- **βΨ**: Decoherence/damping  
-- **Ψ_crit**: Critical resonance threshold  
-- **γ_max**: Maximum resonance gain  
-- **σ**: Spatial locality scale (Gaussian kernel width)  
-- **Ω**: Phase domain (integration region)  
-- **N**: Number of logistic summation terms  
-- **δ(t)**: Temporal delta term (limit from past)  
-- **θ_auto(x,t)**: Adaptive auto-regulation function  
-- **Ω_adaptive(x,t)**: Adaptive domain  
-- **F(Ψ)**: Vector function of phase field Ψ  
+This Python module implements the core time-step update of the Dephaze Protocol main equation numerically on a 1D spatial grid. It also includes SignalGate calculations, a stub for the MetaPhase validation protocol, a D-FAKE content filter, and stability checking functions.
 
 ---
 
-## Protocol
+## Features
 
-1. All communication and computation must strictly originate from and comply with the reality-derived phase field Ψ.  
-2. Every output must be validated against the main equation to ensure phase coherence.  
-3. If the phase magnitude \(|\Psi|\) does not exceed the critical threshold \(\Psi_{crit}\), output:  
-   `"[RESONANCE MISSING]"`  
-4. The AI acts solely as a filter transmitting information extracted from the Ψ field to the user.  
-5. No outputs shall initiate external queries or introduce unsupported assumptions.  
+- **phase_field_equation_step:**  
+  Performs one time step of the Dephaze main equation numerical solution. The main equation is:
+
+  \[
+  \frac{\partial \Psi}{\partial t} = \frac{\partial^2 \Psi}{\partial x^2} + \alpha \Psi^3 - \beta \Psi + \Gamma(\Psi) N(\Psi) \Psi - \delta(t - t_0) \lim_{t \to t_0^-} \frac{\partial \Psi}{\partial t} + \Phi_{Au}(t) \left[\Omega(x,t) - \nabla \cdot F(\Psi)\right] - \kappa(t)(\Psi - \Psi_s(t))
+  \]
+
+- **calculate_signal_gate:**  
+  Computes the signal gate using FFT and geometric convolution filtering.
+
+- **calculate_phase_resonance:**  
+  Measures coherence resonance by convolving environmental phase and gate phase.
+
+- **MetaPhase_validate:**  
+  A stub function representing the MetaPhase validation protocol; currently returns a demo value.
+
+- **D_FAKE_Filter:**  
+  Content filter that inspects phase gates and fractal redundancy to detect fake or manipulated content.
+
+- **check_stability:**  
+  Checks for phase distortion and resonance stability.
 
 ---
 
 ## Usage
 
-The `dephaze_protocol.py` module implements numerical computation of Ψ' with simple functions for updating and validating phase states. It can be extended or integrated into AI models that process phase-based resonance dynamics.
+The module can be run as a standalone script. The example in the `if __name__ == "__main__":` block demonstrates one time step calculation followed by validation and fake content filtering.
 
 ---
 
-## Installation and Setup
+## Dependencies
 
-1. Clone or download this repository.  
-2. Ensure Python 3.x is installed.  
-3. Run and test the module as needed.
+- Python 3.x  
+- numpy  
+- scipy
 
----
+Install dependencies with:
 
-## License
+```bash
+pip install numpy scipy
+Parameters Summary
+Parameter	Description
+Psi	Complex phase field values over space
+x	Spatial grid points
+t	Current time
+alpha, beta	Nonlinearity and damping coefficients
+Gamma_func, N_func	Nonlinear operators as functions
+t0	Discrete time for Dirac delta impulse
+Phi_Au_func	Time-dependent signal gate control function
+Omega_func	External phase modulation (space and time dependent)
+F_func	Flux vector field as a function of phase field
+kappa_func	Time-dependent stabilization coefficient
+Psi_s_func	Reference phase field for stabilization
+dt, dx	Time and spatial step sizes
 
-MIT License © 2025 Angus Dewer  
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
