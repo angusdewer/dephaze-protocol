@@ -1,87 +1,168 @@
+"""
+Dephaze Protocol 3.0 – Full System Description
+
+This Python script models the Dephaze Protocol,
+including the Reality Formation Chronology, the core equation,
+mathematical SignalGate module, and the MetaPhase validation function.
+
+Author: Angus Dewer
+"""
+
 import numpy as np
-from scipy.ndimage import gaussian_filter1d
 
-class DephazeProtocol:
-    def __init__(self, alpha=1.0, beta=0.5, psi_crit=0.7, gamma_max=2.0, sigma=1.0, N=5, domain_size=100):
-        self.alpha = alpha
-        self.beta = beta
-        self.psi_crit = psi_crit
-        self.gamma_max = gamma_max
-        self.sigma = sigma
-        self.N = N
-        self.domain_size = domain_size
+# --- Chronology of Reality Formation ---
+# Levels from 0 (no reality) to 6 (fully active system)
+def update_chronology(t):
+    """
+    Update chronology state based on time 't'.
+    Chronology controls which subsystems are active.
+    """
+    if t < 1:
+        return 0  # ∅≠ Null space, no reality
+    elif t < 2:
+        return 1
+    elif t < 3:
+        return 2
+    elif t < 4:
+        return 3
+    elif t < 5:
+        return 4
+    elif t < 6:
+        return 5  # SignalGate starts activation here
+    else:
+        return 6  # Fully stabilized phase field
 
-        # Initialize phase field Ψ with zeros
-        self.psi = np.zeros(domain_size)
+# --- Main Parameters (constants or functions) ---
+alpha = 1.0
+beta = 0.5
 
-    def logistic_sum(self, psi_abs):
-        s = 0.0
-        for k in range(1, self.N + 1):
-            s += 1 / (1 + np.exp(-k * (psi_abs - self.psi_crit))) * self.gamma_max
-        return s
+def kappa(t):
+    # Stabilization factor κ(t)
+    return 0.1 + 0.05 * np.sin(t)
 
-    def adaptive_omega(self, x, t):
-        # Placeholder for Ω_adaptive(x,t), implement based on use-case
-        return 0
+def psi_s(t):
+    # Stabilization target ψ_s(t)
+    return np.sin(t)
 
-    def divergence_F(self, psi):
-        # Placeholder for divergence of F(Ψ), implement as needed
-        return 0
+def phi_au(t):
+    # SignalGate scalar multiplier Φ_Au(t)
+    return 1.0 + 0.1 * np.cos(t)
 
-    def delta_t(self, t, t0):
-        # Approximation of δ(t) * lim_{t→t₀⁻} ∂Ψ/∂t term
-        # For numerical purposes, this can be zero or a designed impulse function
-        return 0
+def omega(x, t):
+    # Ω(x, t) function for SignalGate
+    return np.sin(x + t)
 
-    def compute_psi_prime(self, t=0, t0=0):
-        laplacian = np.roll(self.psi, -1) - 2 * self.psi + np.roll(self.psi, 1)
-        nonlinear = self.alpha * (self.psi ** 3)
-        decoherence = self.beta * self.psi
+def flux_F(psi):
+    # Flux function F(ψ) used for divergence in SignalGate
+    return np.gradient(psi) * 0.5
 
-        psi_squared = self.psi ** 2
-        gaussian_conv = gaussian_filter1d(psi_squared, self.sigma)
+def N(psi):
+    # Nonlinear operator N(ψ)
+    return psi ** 2
 
-        logistic_factor = self.logistic_sum(np.abs(self.psi))
+def Gamma(psi):
+    # Operator Γ(ψ)
+    return np.exp(-psi)
 
-        auto_theta = 1  # Assuming θ_auto(x,t) = 1 for simplicity; customize if needed
-        omega_adaptive = self.adaptive_omega(None, t)
-        div_F = self.divergence_F(self.psi)
+def delta_approx(t, t0, epsilon=1e-2):
+    # Approximate Dirac delta function as a narrow Gaussian
+    return np.exp(-((t - t0) ** 2) / (2 * epsilon ** 2)) / (epsilon * np.sqrt(2 * np.pi))
 
-        delta_term = self.delta_t(t, t0)
+# --- Differential Operators ---
 
-        psi_prime = (
-            laplacian
-            + nonlinear
-            - decoherence
-            + logistic_factor * gaussian_conv * self.psi
-            - delta_term
-            + auto_theta * (omega_adaptive - div_F)
-        )
-        return psi_prime
+def laplacian(psi, dx):
+    """
+    Compute second spatial derivative (diffusion term)
+    using finite difference method.
+    """
+    d2psi_dx2 = np.zeros_like(psi)
+    d2psi_dx2[1:-1] = (psi[2:] - 2 * psi[1:-1] + psi[:-2]) / dx**2
+    # Boundary conditions: zero second derivative at boundaries
+    d2psi_dx2[0] = d2psi_dx2[1]
+    d2psi_dx2[-1] = d2psi_dx2[-2]
+    return d2psi_dx2
 
-    def step(self, dt=0.01, t=0, t0=0):
-        psi_prime = self.compute_psi_prime(t, t0)
+def divergence(F, dx):
+    """
+    Compute divergence of flux F using finite difference.
+    """
+    dF_dx = np.zeros_like(F)
+    dF_dx[1:-1] = (F[2:] - F[:-2]) / (2 * dx)
+    # Boundary conditions: zero flux gradient at boundaries
+    dF_dx[0] = dF_dx[1]
+    dF_dx[-1] = dF_dx[-2]
+    return dF_dx
 
-        # Resonance threshold check
-        if np.any(np.abs(self.psi) < self.psi_crit):
-            print("[RESONANCE MISSING]")
-            return
+# --- Core Dephaze Equation ---
 
-        # Euler integration step
-        self.psi += psi_prime * dt
+def dpsi_dt(t, x, psi, dx):
+    """
+    Compute time derivative of ψ at time t and positions x.
+    Incorporates the main Dephaze Protocol equation terms,
+    controlled by chronology level.
+    """
+    chrono = update_chronology(t)
 
-    def set_initial_state(self, initial_psi):
-        if len(initial_psi) != self.domain_size:
-            raise ValueError(f"Initial state size must be {self.domain_size}")
-        self.psi = np.array(initial_psi)
+    # Basic diffusion and nonlinear terms
+    diffusion = laplacian(psi, dx)
+    nonlinear = alpha * psi**3 - beta * psi
+    gamma_term = Gamma(psi)
+    N_term = N(psi)
+
+    # Instantaneous discontinuity term at t0=3.0 (example)
+    t0 = 3.0
+    delta_term = delta_approx(t, t0) * (psi - psi_s(t))  # example limit operation
+    
+    # SignalGate term activated at chronology >= 5
+    if chrono >= 5:
+        F = flux_F(psi)
+        div_F = divergence(F, dx)
+        signalgate_term = phi_au(t) * (omega(x, t) - div_F)
+    else:
+        signalgate_term = 0.0
+
+    # Stabilization term
+    stabil_term = -kappa(t) * (psi - psi_s(t))
+
+    # Compose full derivative
+    dpsi = diffusion + nonlinear + gamma_term * N_term + delta_term + signalgate_term + stabil_term
+
+    return dpsi
+
+# --- MetaPhase Protocol (Ξ-core) Validation ---
+
+def metaphrase_validation(psi, threshold=1e-3):
+    """
+    External unbiased validator for Dephaze Protocol output.
+    Checks if psi satisfies stability and correctness criteria.
+    Returns True if valid, False otherwise.
+    """
+    variation = np.max(np.abs(np.gradient(psi)))
+    if variation < threshold:
+        return True
+    else:
+        return False
+
+# --- Example Usage ---
 
 if __name__ == "__main__":
-    dp = DephazeProtocol()
+    # Spatial domain setup
+    x = np.linspace(0, 2 * np.pi, 100)
+    dx = x[1] - x[0]
 
-    # Example initial state with random values between -1 and 1
-    init_state = np.random.uniform(-1, 1, dp.domain_size)
-    dp.set_initial_state(init_state)
+    # Initial psi state
+    psi = np.sin(x)
 
-    for step in range(100):
-        dp.step()
-        # Optional: print or visualize state here
+    # Current time for testing
+    t = 5.5
+
+    # Compute time derivative
+    dpsi = dpsi_dt(t, x, psi, dx)
+
+    # Print outputs
+    print(f"Chronology level at t={t}: {update_chronology(t)}")
+    print(f"dψ/dt sample values: {dpsi[:5]}")
+
+    # Validate output with MetaPhase
+    valid = metaphrase_validation(psi)
+    print(f"MetaPhase validation: {'Valid' if valid else 'Invalid'}")
