@@ -1,168 +1,172 @@
 """
-Dephaze Protocol 3.0 – Full System Description
+Dephaze Protocol Module with Chronology Handling
 
-This Python script models the Dephaze Protocol,
-including the Reality Formation Chronology, the core equation,
-mathematical SignalGate module, and the MetaPhase validation function.
+- DFake Filter: detects fake data signatures
+- SignalGate: phase-based gating
+- MemoryCache: simple cache with expiration and max size
+- MetaPhase Validation: external validation simulation
+- Chronology: tracks reality genesis events with levels 0-5
 
+Full protocol info: https://dephaze.com
 Author: Angus Dewer
 """
 
-import numpy as np
+import time
 
-# --- Chronology of Reality Formation ---
-# Levels from 0 (no reality) to 6 (fully active system)
-def update_chronology(t):
-    """
-    Update chronology state based on time 't'.
-    Chronology controls which subsystems are active.
-    """
-    if t < 1:
-        return 0  # ∅≠ Null space, no reality
-    elif t < 2:
-        return 1
-    elif t < 3:
-        return 2
-    elif t < 4:
-        return 3
-    elif t < 5:
-        return 4
-    elif t < 6:
-        return 5  # SignalGate starts activation here
-    else:
-        return 6  # Fully stabilized phase field
+# DFake filter example
+def dfake_filter(data):
+    fake_signatures = ["fake", "error", "invalid", "bogus"]
+    if any(sig in str(data).lower() for sig in fake_signatures):
+        print("[DFake Filter] Fake signature detected.")
+        return False
+    return True
 
-# --- Main Parameters (constants or functions) ---
-alpha = 1.0
-beta = 0.5
-
-def kappa(t):
-    # Stabilization factor κ(t)
-    return 0.1 + 0.05 * np.sin(t)
-
-def psi_s(t):
-    # Stabilization target ψ_s(t)
-    return np.sin(t)
-
-def phi_au(t):
-    # SignalGate scalar multiplier Φ_Au(t)
-    return 1.0 + 0.1 * np.cos(t)
-
-def omega(x, t):
-    # Ω(x, t) function for SignalGate
-    return np.sin(x + t)
-
-def flux_F(psi):
-    # Flux function F(ψ) used for divergence in SignalGate
-    return np.gradient(psi) * 0.5
-
-def N(psi):
-    # Nonlinear operator N(ψ)
-    return psi ** 2
-
-def Gamma(psi):
-    # Operator Γ(ψ)
-    return np.exp(-psi)
-
-def delta_approx(t, t0, epsilon=1e-2):
-    # Approximate Dirac delta function as a narrow Gaussian
-    return np.exp(-((t - t0) ** 2) / (2 * epsilon ** 2)) / (epsilon * np.sqrt(2 * np.pi))
-
-# --- Differential Operators ---
-
-def laplacian(psi, dx):
-    """
-    Compute second spatial derivative (diffusion term)
-    using finite difference method.
-    """
-    d2psi_dx2 = np.zeros_like(psi)
-    d2psi_dx2[1:-1] = (psi[2:] - 2 * psi[1:-1] + psi[:-2]) / dx**2
-    # Boundary conditions: zero second derivative at boundaries
-    d2psi_dx2[0] = d2psi_dx2[1]
-    d2psi_dx2[-1] = d2psi_dx2[-2]
-    return d2psi_dx2
-
-def divergence(F, dx):
-    """
-    Compute divergence of flux F using finite difference.
-    """
-    dF_dx = np.zeros_like(F)
-    dF_dx[1:-1] = (F[2:] - F[:-2]) / (2 * dx)
-    # Boundary conditions: zero flux gradient at boundaries
-    dF_dx[0] = dF_dx[1]
-    dF_dx[-1] = dF_dx[-2]
-    return dF_dx
-
-# --- Core Dephaze Equation ---
-
-def dpsi_dt(t, x, psi, dx):
-    """
-    Compute time derivative of ψ at time t and positions x.
-    Incorporates the main Dephaze Protocol equation terms,
-    controlled by chronology level.
-    """
-    chrono = update_chronology(t)
-
-    # Basic diffusion and nonlinear terms
-    diffusion = laplacian(psi, dx)
-    nonlinear = alpha * psi**3 - beta * psi
-    gamma_term = Gamma(psi)
-    N_term = N(psi)
-
-    # Instantaneous discontinuity term at t0=3.0 (example)
-    t0 = 3.0
-    delta_term = delta_approx(t, t0) * (psi - psi_s(t))  # example limit operation
-    
-    # SignalGate term activated at chronology >= 5
-    if chrono >= 5:
-        F = flux_F(psi)
-        div_F = divergence(F, dx)
-        signalgate_term = phi_au(t) * (omega(x, t) - div_F)
-    else:
-        signalgate_term = 0.0
-
-    # Stabilization term
-    stabil_term = -kappa(t) * (psi - psi_s(t))
-
-    # Compose full derivative
-    dpsi = diffusion + nonlinear + gamma_term * N_term + delta_term + signalgate_term + stabil_term
-
-    return dpsi
-
-# --- MetaPhase Protocol (Ξ-core) Validation ---
-
-def metaphrase_validation(psi, threshold=1e-3):
-    """
-    External unbiased validator for Dephaze Protocol output.
-    Checks if psi satisfies stability and correctness criteria.
-    Returns True if valid, False otherwise.
-    """
-    variation = np.max(np.abs(np.gradient(psi)))
-    if variation < threshold:
+# SignalGate simulation
+def signal_gate(input_signal, phase_state):
+    if phase_state == "active":
+        print(f"[SignalGate] Signal '{input_signal}' allowed through at phase '{phase_state}'.")
         return True
     else:
+        print(f"[SignalGate] Signal '{input_signal}' blocked at phase '{phase_state}'.")
         return False
 
-# --- Example Usage ---
+# MemoryCache with expiration and max size
+class MemoryCache:
+    def __init__(self, max_size=100, expire_seconds=300):
+        self.cache = {}
+        self.max_size = max_size
+        self.expire_seconds = expire_seconds
 
+    def store(self, key, value):
+        current_time = time.time()
+        self.cache[key] = (value, current_time)
+        self._cleanup()
+        print(f"[MemoryCache] Stored key '{key}'.")
+
+    def retrieve(self, key):
+        current_time = time.time()
+        if key in self.cache:
+            value, timestamp = self.cache[key]
+            if current_time - timestamp < self.expire_seconds:
+                print(f"[MemoryCache] Retrieved key '{key}'.")
+                return value
+            else:
+                print(f"[MemoryCache] Key '{key}' expired and removed.")
+                del self.cache[key]
+        print(f"[MemoryCache] Key '{key}' not found.")
+        return None
+
+    def _cleanup(self):
+        if len(self.cache) > self.max_size:
+            sorted_items = sorted(self.cache.items(), key=lambda item: item[1][1])
+            while len(self.cache) > self.max_size:
+                oldest_key = sorted_items.pop(0)[0]
+                del self.cache[oldest_key]
+                print(f"[MemoryCache] Removed oldest key '{oldest_key}' due to max size.")
+
+# MetaPhase validation simulation
+def metaphrase_validation(processed_data, original_input):
+    if "reject" in str(processed_data).lower():
+        print("[MetaPhase] Validation failed.")
+        return False
+    print("[MetaPhase] Validation succeeded.")
+    return True
+
+# Chronology handling class
+class Chronology:
+    """
+    Stores ordered events with levels from 0 (Ø ≠) to 5 (D).
+    Levels represent the phases of reality genesis as in Dephaze Protocol.
+    """
+    LEVEL_DESCRIPTIONS = {
+        0: "Ø ≠ - Initial Singularity (Undefined Origin)",
+        1: "Pre-Phase - Protofaze Formation",
+        2: "Phase - Basic Phasefield Structuring",
+        3: "Phase Field (PF) - Multi-Modal Phase Interaction",
+        4: "Phase Reality (PR) - Emergence of Coherent Reality",
+        5: "D - Finalized Dephaze Reality"
+    }
+
+    def __init__(self):
+        self.events = []  # List of tuples: (timestamp, level, description)
+
+    def add_event(self, level, description):
+        if level not in self.LEVEL_DESCRIPTIONS:
+            raise ValueError(f"Invalid level {level}, must be 0-5.")
+        timestamp = time.time()
+        self.events.append((timestamp, level, description))
+        print(f"[Chronology] Event added: Level {level} - {self.LEVEL_DESCRIPTIONS[level]} | {description}")
+
+    def get_events(self, level=None):
+        if level is None:
+            return self.events
+        else:
+            return [e for e in self.events if e[1] == level]
+
+    def print_events(self):
+        print("=== Chronology Events ===")
+        for ts, level, desc in sorted(self.events, key=lambda e: e[0]):
+            time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
+            print(f"{time_str} | Level {level}: {self.LEVEL_DESCRIPTIONS[level]} | {desc}")
+
+# Combined processing function with chronology update
+def process_dephaze_input(input_data, phase_state, cache, chronology):
+    print("=== Dephaze Protocol Processing Started ===")
+
+    # Step 1: DFake Filter
+    if not dfake_filter(input_data):
+        print("Input rejected by DFake filter.")
+        chronology.add_event(0, f"DFake filter rejected input: '{input_data}'")
+        return None
+
+    # Step 2: Signal Gate
+    if not signal_gate(input_data, phase_state):
+        print("Input blocked by Signal Gate.")
+        chronology.add_event(1, f"Signal Gate blocked input at phase '{phase_state}': '{input_data}'")
+        return None
+
+    # Step 3: Memory Cache Store
+    cache.store(input_data, {"phase": phase_state, "timestamp": time.time()})
+
+    # Step 4: Simulate processing (identity)
+    processed = input_data
+
+    # Step 5: MetaPhase Validation
+    if not metaphrase_validation(processed, input_data):
+        print("Processed data failed MetaPhase validation.")
+        chronology.add_event(2, f"MetaPhase validation failed for input: '{input_data}'")
+        return None
+
+    # Step 6: Add successful event to chronology at highest phase
+    chronology.add_event(5, f"Input processed successfully: '{input_data}'")
+
+    print("=== Dephaze Protocol Processing Completed Successfully ===")
+    return processed
+
+
+# Main test block
 if __name__ == "__main__":
-    # Spatial domain setup
-    x = np.linspace(0, 2 * np.pi, 100)
-    dx = x[1] - x[0]
+    print("Dephaze Protocol Module loaded.")
+    print("Visit https://dephaze.com for more information.")
 
-    # Initial psi state
-    psi = np.sin(x)
+    # Create instances
+    memory_cache = MemoryCache(max_size=5, expire_seconds=60)
+    chronology = Chronology()
 
-    # Current time for testing
-    t = 5.5
+    # Test inputs
+    test_inputs = [
+        "valid data 123",
+        "this is fake data",
+        "another valid input",
+        "reject this data",
+        "final test input"
+    ]
 
-    # Compute time derivative
-    dpsi = dpsi_dt(t, x, psi, dx)
+    for input_text in test_inputs:
+        result = process_dephaze_input(input_text, phase_state="active", cache=memory_cache, chronology=chronology)
+        print(f"Result for '{input_text}': {result}")
+        print("---")
+        time.sleep(1)
 
-    # Print outputs
-    print(f"Chronology level at t={t}: {update_chronology(t)}")
-    print(f"dψ/dt sample values: {dpsi[:5]}")
-
-    # Validate output with MetaPhase
-    valid = metaphrase_validation(psi)
-    print(f"MetaPhase validation: {'Valid' if valid else 'Invalid'}")
+    # Print full chronology at the end
+    chronology.print_events()
