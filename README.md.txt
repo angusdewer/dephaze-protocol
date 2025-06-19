@@ -1,4 +1,4 @@
-# Dephaze Protocol Python Module
+# Dephaze Protocol 3.0 Python Module
 
 **Author:** Angus Dewer  
 **Website:** [https://dephaze.com](https://dephaze.com)  
