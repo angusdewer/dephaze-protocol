@@ -3,7 +3,7 @@ name: Log Access
 on:
   push:
     branches:
-      - main  # Ha az ágad neve nem "main", írd át pl. "master"-re
+      - main  # Ha más az ágad neve, cseréld ki
 
 jobs:
   log-access:
@@ -12,14 +12,14 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Log timestamp and user
+      - name: Log timestamp and user (Budapest time)
         run: |
           echo "🔍 Push detected!"
-          echo "⏰ Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "⏰ Time: $(TZ='Europe/Budapest' date +'%Y-%m-%d %H:%M:%S %Z')"
           echo "📛 Actor: ${{ github.actor }}"
           echo "📝 Commit: ${{ github.sha }}"
           mkdir -p .logs
-          echo "Push by ${{ github.actor }} at $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> .logs/push_log.txt
+          echo "Push by ${{ github.actor }} at $(TZ='Europe/Budapest' date +'%Y-%m-%d %H:%M:%S %Z')" >> .logs/push_log.txt
 
       - name: Upload push log artifact
         uses: actions/upload-artifact@v4
