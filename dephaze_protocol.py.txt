@@ -191,7 +191,7 @@ def D_FAKE_Filter(input_text):
     phase_valid = detect_signal_gate(input_text)
     fractal_score = detect_fractal_redundancy(input_text)
     metaval = MetaPhase_validate(input_text)
-    # Torzító közeg mértéke (distortion measure) T_a - placeholder zero
+    # Distortion measure placeholder
     T_a = 0.0
 
     if (not phase_valid) or (fractal_score > theta_F) or (metaval < epsilon) or (T_a > delta):
