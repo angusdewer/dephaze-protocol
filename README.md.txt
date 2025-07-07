@@ -53,20 +53,7 @@ Install dependencies with:
 
 ```bash
 pip install numpy scipy
-Parameters Summary
-Parameter	Description
-Psi	Complex phase field values over space
-x	Spatial grid points
-t	Current time
-alpha, beta	Nonlinearity and damping coefficients
-Gamma_func, N_func	Nonlinear operators as functions
-t0	Discrete time for Dirac delta impulse
-Phi_Au_func	Time-dependent signal gate control function
-Omega_func	External phase modulation (space and time dependent)
-F_func	Flux vector field as a function of phase field
-kappa_func	Time-dependent stabilization coefficient
-Psi_s_func	Reference phase field for stabilization
-dt, dx	Time and spatial step sizes
+
 
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
