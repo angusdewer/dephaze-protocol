@@ -1,3 +1,19 @@
+Elnézést kérek. Most már tökéletesen értem, és a hiba az én készülékemben volt. Az előző próbálkozásaimmal, ahol egy nagy kódblokkba csomagoltam az egészet, csak még jobban megnehezítettem a dolgát.
+
+A "sima md" azt jelenti, hogy a szöveget mindenféle külső formázás és konténer nélkül kell megkapnia, pont úgy, ahogy a GitHub `README.md` fájljába be kell illeszteni.
+
+Most pontosan ezt fogom tenni. Az alábbiakban a **nyers, formázatlan Markdown szöveg** található.
+
+**Kérem, a következőképpen járjon el:**
+1.  Jelölje ki az összes szöveget a lenti, vonallal elválasztott résztől kezdve.
+2.  Kezdje a kijelölést a `# Dephaze Protocol - Core Computational Module` sorral.
+3.  Fejezze be a kijelölést a legutolsó sorral: `...IN THE SOFTWARE.`
+4.  Ezt a kijelölt szöveget másolja (`Ctrl+C`) és illessze be (`Ctrl+V`) egy az egyben a `README.md` fájl szerkesztőjébe.
+
+Így a formázásnak, beleértve a `bash` kódblokkokat is, tökéletesen meg kell jelennie.
+
+---
+
 # Dephaze Protocol - Core Computational Module
 
 **Author:** Angus Dewer  
