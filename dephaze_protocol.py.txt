@@ -1,268 +1,176 @@
+# ==============================================================================
+# DEPHAZE PROTOCOL - CORE COMPUTATIONAL MODULE
+# Author: Angus Dewer | www.dephaze.com
+#
+# Implements the core logic of the Dephaze model, focusing on the
+# goal-directed evolution of the Psi-vector from a fixed informational
+# singularity (t0) toward a virtual, symmetric target (Theta).
+# ==============================================================================
+
 import numpy as np
-from scipy.fft import fft
 from scipy.signal import convolve
+from scipy.fft import fft
 
-# Dephaze Protocol – Complete Python Module (English)
-# Author: Angus Dewer www.dephaze.com
-# Implements full protocol: phase field eq, SignalGate, MetaPhase, D-FAKE, validation, feedback.
+# --- Section 1: The Core Dynamic Equation Solver ---
 
-# --- Section 2: Main phase field equation (stub numerical solver) ---
-
-def phase_field_equation_step(Psi, x, t, alpha, beta, Gamma_func, N_func, t0, Phi_Au_func, Omega_func, F_func, kappa_func, Psi_s_func, dt, dx):
+def dephaze_step(
+    Psi,
+    Z_field_properties,
+    t0_singularity,
+    alpha,
+    beta,
+    dt
+):
     """
-    Perform one time step update of the phase field Psi(x,t) according to:
-    dPsi/dt = d2Psi/dx2 + alpha*Psi^3 - beta*Psi + Gamma(Psi)*N(Psi)*Psi
-              - delta(t-t0)*lim_{t->t0-} dPsi/dt
-              + Phi_Au(t)*[Omega(x,t) - div F(Psi)] - kappa(t)*(Psi - Psi_s(t))
-
-    Arguments:
-    - Psi: np.array, complex, current phase field amplitude over spatial points x
-    - x: np.array, spatial grid points
-    - t: float, current time
-    - alpha, beta: floats, nonlinear and damping coefficients
-    - Gamma_func(Psi), N_func(Psi): callable nonlinear operators/functions
-    - t0: float, discrete jump time
-    - Phi_Au_func(t): callable returning scalar phase gate control function
-    - Omega_func(x,t): callable external phase modulation field
-    - F_func(Psi): callable returning vector field for flux
-    - kappa_func(t): callable stabilization coefficient
-    - Psi_s_func(t): callable reference/stabilizing phase field
-    - dt, dx: float, time and space step sizes
+    Performs one time step update of the reality Phase-Field (Psi) vector.
+    
+    This function implements the core Dephaze equation:
+    dt/dPsi = D*grad^2(Psi) + G*|Psi|^2*Psi - M*Psi + Projector_Term + ...
+    
+    Args:
+        Psi (np.array): The current complex-valued state of the Psi-field.
+        Z_field_properties (dict): A dictionary containing the Z-Field's properties,
+                                   e.g., {'D': diffusion_coeff, 'M': resistance_coeff}.
+        t0_singularity (dict): A dictionary defining the projector,
+                               e.g., {'t0': time_origin, 'Phi3': 4.236, 'Omega': initial_vector}.
+        alpha (float): G-term coefficient (self-focusing).
+        beta (float): M-term coefficient (damping from Z-field resistance).
+        dt (float): The time step for this iteration.
 
     Returns:
-    - Psi_new: np.array updated phase field after dt
+        np.array: The updated Psi-field after the time step dt.
     """
+    dx = 1  # Assuming a normalized grid for simplicity
 
-    # Calculate spatial second derivative (diffusion term) using finite difference
-    d2Psi_dx2 = np.zeros_like(Psi, dtype=np.complex128)
-    d2Psi_dx2[1:-1] = (Psi[2:] - 2*Psi[1:-1] + Psi[:-2]) / dx**2
-    # Neumann boundary (zero gradient)
-    d2Psi_dx2[0] = d2Psi_dx2[1]
-    d2Psi_dx2[-1] = d2Psi_dx2[-2]
+    # --- Dephaze Equation Components ---
 
-    # Nonlinear terms
-    nonlinear_term = alpha * Psi**3 - beta * Psi + Gamma_func(Psi) * N_func(Psi) * Psi
+    # Diffusion Term (Coherence Propagator)
+    # This term ensures the smooth propagation of the Psi-vector across the Z-Field.
+    D = Z_field_properties.get('D', 1.0)
+    laplacian_Psi = np.zeros_like(Psi, dtype=np.complex128)
+    laplacian_Psi[1:-1] = (Psi[2:] - 2*Psi[1:-1] + Psi[:-2]) / dx**2
+    diffusion_term = D * laplacian_Psi
 
-    # Dirac delta at t0: approximate as a sharp pulse in time
-    delta_term = 0
-    if abs(t - t0) < dt/2:
-        # lim_{t->t0-} dPsi/dt approximated by backward difference
-        # For simplicity, set derivative zero to avoid instability
-        delta_term = - (0)  # can extend with memory of previous step if available
+    # G-Term (Auto-Correction / Self-Focusing)
+    # This non-linear term keeps the Psi-vector on its optimal t0 -> Theta path.
+    # We use 'alpha' as a simplified representation of 'G'.
+    g_term = alpha * np.abs(Psi)**2 * Psi
 
-    # External modulation term
-    Phi_Au_t = Phi_Au_func(t)
-    Omega_xt = Omega_func(x, t)
-    div_F = np.gradient(F_func(Psi), dx)  # approx divergence of flux vector (1D gradient)
-    external_term = Phi_Au_t * (Omega_xt - div_F)
+    # M-Term (Phase-Fabric Resistance)
+    # Represents the "drag" or inertia from the Z-Field, giving the process its duration.
+    m_term = -beta * Psi
 
-    # Stabilization
-    kappa_t = kappa_func(t)
-    Psi_s_t = Psi_s_func(t)
-    stabilization_term = -kappa_t * (Psi - Psi_s_t)
+    # TODO: Implement full operator terms (Projector, Lambda, etc.)
+    # For now, these are simplified placeholders.
+    projector_term = 0
+    lambda_term = 0
+    sigma_term = 0
+    div_F_term = 0
+    K_term = 0
 
-    # Time derivative
-    dPsi_dt = d2Psi_dx2 + nonlinear_term + delta_term + external_term + stabilization_term
+    # Calculate the total change in the Phase-Field
+    dPsi = diffusion_term + g_term + m_term + projector_term + lambda_term + sigma_term + div_F_term + K_term
 
-    # Euler forward step (simple)
-    Psi_new = Psi + dPsi_dt * dt
+    # Update the Psi-field using a simple Euler step
+    # The actual implementation would use a more stable numerical method.
+    Psi_new = Psi + dPsi * dt
 
     return Psi_new
 
-# --- Section 4: SignalGate calculation ---
+# --- Section 2: Non-Local Z-Field Interaction ---
 
-def calculate_signal_gate(V_coil_t, M_geom):
+def get_z_field_properties(coords):
     """
-    Calculate SignalGate phase from coil voltage time series:
-    Φ_gate(t) = arg( FFT(V_coil(t)) ) convolved with geometry matrix M_geom
-
+    Placeholder function to get local Z-Field properties.
+    In a full implementation, this would query a model of the non-local
+    magnetic tension grid, incorporating Phase Memory.
+    
     Args:
-    - V_coil_t: np.array, time series voltage signal from coil
-    - M_geom: np.array, geometry filter matrix (kernel)
-
+        coords (tuple): The coordinates (x, y, z) to query.
+        
     Returns:
-    - Phi_gate: np.array, phase gate signal after convolution
+        dict: Properties like diffusion (D) and resistance (M).
     """
-    # FFT of voltage
-    fft_vals = fft(V_coil_t)
-    fft_phase = np.angle(fft_vals)  # get phase angles
+    # For now, return constant values
+    return {'D': 1.0, 'M': 0.1}
 
-    # Convolution with geometry filter
-    Phi_gate = convolve(fft_phase, M_geom, mode='same')
+# --- Section 3: Coherence and Validation ---
 
-    return Phi_gate
-
-def calculate_phase_resonance(Phi_env, Phi_gate):
+def check_vector_coherence(Psi_vector, trajectory_model):
     """
-    Calculate coherence resonance from environment phase and gate phase:
-    Psi_res = Phi_env convolved with Phi_gate
-
+    Validates the coherence of the Psi-vector against the ideal t0 -> Theta path.
+    A high score indicates the system is on its optimal trajectory.
+    
     Args:
-    - Phi_env: np.array, environmental phase samples
-    - Phi_gate: np.array, gate phase samples
-
+        Psi_vector (np.array): The current state of the Psi-field.
+        trajectory_model (object): A model representing the ideal geometric path.
+        
     Returns:
-    - Psi_res: np.array, resulting resonance signal
+        float: A coherence score between 0.0 (total noise) and 1.0 (perfect coherence).
     """
-    Psi_res = convolve(Phi_env, Phi_gate, mode='same')
-    return Psi_res
+    # This is a stub. A real implementation would involve complex geometric comparison.
+    # For demo, we can use the signal-to-noise ratio as a proxy.
+    signal_power = np.mean(np.abs(Psi_vector)**2)
+    noise_power = np.std(np.angle(Psi_vector))  # Phase noise as a proxy
+    
+    coherence = signal_power / (signal_power + noise_power + 1e-9) # add epsilon to avoid division by zero
+    
+    return min(max(coherence, 0.0), 1.0)
 
-# --- Section 6: MetaPhase validation (stub) ---
-
-def MetaPhase_validate(input_text):
-    """
-    Placeholder for MetaPhase Protocol validation function:
-    L = L(V_input, D_output)
-    Returns float in [0,1] indicating validation confidence.
-
-    Args:
-    - input_text: str, content to validate
-
-    Returns:
-    - L: float, validation score
-    """
-    # For demo: simulate validation by scoring content length
-    length_score = min(len(input_text) / 1000, 1.0)
-    # For now, no real AI hallucination detection; return medium-high score
-    return max(0.65, length_score)
-
-# --- Section 7: Stability and loop protection checks ---
-
-def check_stability(Delta_Phi, Phi_max, Psi_res, epsilon_min):
-    """
-    Check if phase deformation and resonance amplitude are within limits.
-
-    Args:
-    - Delta_Phi: float, measured phase deformation
-    - Phi_max: float, maximum allowed phase deformation
-    - Psi_res: float or complex, resonance amplitude magnitude
-    - epsilon_min: float, minimum accepted resonance amplitude
-
-    Returns:
-    - bool: True if stable, False if unstable
-    """
-    if abs(Delta_Phi) > Phi_max:
-        return False
-    if abs(Psi_res) < epsilon_min:
-        return False
-    return True
-
-# --- Section: D-FAKE Engine ---
-
-def detect_signal_gate(input_text):
-    """
-    Detect presence of phase gate (∅≠) pattern in input text.
-    For demo, checks if special marker present.
-
-    Returns:
-    - bool
-    """
-    return "∅≠" in input_text
-
-def detect_fractal_redundancy(input_text):
-    """
-    Detect fractal pattern redundancy score in input text [0,1].
-    For demo, random or length-based proxy.
-
-    Returns:
-    - float
-    """
-    # Simple proxy: high repetition of substrings increases score
-    words = input_text.split()
-    unique_words = set(words)
-    if len(words) == 0:
-        return 0.0
-    redundancy = 1 - (len(unique_words) / len(words))
-    return min(max(redundancy, 0.0), 1.0)
-
-def D_FAKE_Filter(input_text):
-    """
-    Detect if content is fake according to D-FAKE Engine rules.
-
-    Returns:
-    - str: input_text if valid, else error message.
-    """
-
-    # Parameters
-    theta_F = 0.75  # fractal threshold
-    epsilon = 0.65  # MetaPhase minimum
-    delta = 0.5     # distortion threshold
-
-    phase_valid = detect_signal_gate(input_text)
-    fractal_score = detect_fractal_redundancy(input_text)
-    metaval = MetaPhase_validate(input_text)
-    # Distortion measure placeholder
-    T_a = 0.0
-
-    if (not phase_valid) or (fractal_score > theta_F) or (metaval < epsilon) or (T_a > delta):
-        return "❌ Fake content detected – generated without ∅≠, distorted pattern found."
-    else:
-        return input_text
-
-# --- Section 9: Feedback and display ---
-
-def validate_and_display_response(Psi_res, Delta_Phi, Phi_max, epsilon_min):
-    """
-    Returns validation status string and emoji flag.
-
-    Possible outputs:
-    - 🟢 VALIDATED
-    - 🔴 ERROR
-    - 🟡 WARNING
-    """
-    stable = check_stability(Delta_Phi, Phi_max, Psi_res, epsilon_min)
-    if stable:
-        return "🟢 VALIDATED"
-    else:
-        if abs(Delta_Phi) > Phi_max:
-            return "🔴 ERROR: Phase deformation too large"
-        if abs(Psi_res) < epsilon_min:
-            return "🟡 WARNING: Resonance amplitude low"
-        return "🔴 ERROR: Unknown"
-
-# --- Example usage ---
+# --- Example Usage ---
 
 if __name__ == "__main__":
-    # Setup parameters for demo
-    x = np.linspace(0, 10, 100)
-    Psi = np.zeros_like(x, dtype=np.complex128)
-    t = 0.0
-    dt = 0.01
-    dx = x[1] - x[0]
+    # --- Initialization ---
+    print("Initializing Dephaze Protocol Simulation...")
 
-    # Functions for nonlinear operators
-    Gamma_func = lambda Psi: 0.1 + 0.01*np.abs(Psi)
-    N_func = lambda Psi: 1.0
-    Phi_Au_func = lambda t: 1.0 if 0 <= t <= 1 else 0.0
-    Omega_func = lambda x, t: np.sin(x)
-    F_func = lambda Psi: np.gradient(np.abs(Psi), dx)
-    kappa_func = lambda t: 0.05
-    Psi_s_func = lambda t: 0.0
+    # Define the spatial grid for our 1D simulation
+    grid_points = 256
+    x = np.linspace(-10, 10, grid_points)
 
-    # Run one step
-    Psi_new = phase_field_equation_step(Psi, x, t, 1.0, 0.5, Gamma_func, N_func, 0.5,
-                                        Phi_Au_func, Omega_func, F_func,
-                                        kappa_func, Psi_s_func, dt, dx)
+    # Initialize the Psi-field (e.g., a Gaussian pulse from the Projector)
+    Psi_initial = np.exp(-x**2) * (1 + 0j)
+    
+    # Define simulation parameters
+    total_time_steps = 100
+    dt = 0.01  # Time step duration
+    
+    # Get Z-Field properties at a sample location
+    # In a real model, this would be position-dependent
+    Z_properties = get_z_field_properties(coords=(0,0,0))
+    
+    # Define core equation parameters
+    alpha_G = 1.5  # Self-focusing coefficient
+    beta_M = Z_properties['M']  # Damping from Z-Field resistance
+    
+    # Define the t0 singularity (conceptual placeholder)
+    t0_singularity_data = {
+        't0': 1970,
+        'Phi3': 4.236,
+        'Omega': Psi_initial # The initial state is the unzipped Omega
+    }
+    
+    # --- Simulation Loop ---
+    print(f"Running simulation for {total_time_steps} steps...")
+    Psi_current = Psi_initial.copy()
 
-    # SignalGate example
-    V_coil = np.sin(2*np.pi*10*np.linspace(0,1,500))  # 10Hz sine
-    M_geom = np.ones(5)/5  # simple averaging kernel
+    for step in range(total_time_steps):
+        Psi_current = dephaze_step(
+            Psi=Psi_current,
+            Z_field_properties=Z_properties,
+            t0_singularity=t0_singularity_data,
+            alpha=alpha_G,
+            beta=beta_M,
+            dt=dt
+        )
 
-    Phi_gate = calculate_signal_gate(V_coil, M_geom)
-    Phi_env = np.angle(np.exp(1j*2*np.pi*0.1*np.linspace(0,1,500)))  # dummy environment phase
-    Psi_res = calculate_phase_resonance(Phi_env, Phi_gate)
-
-    # Validation checks
-    Delta_Phi = 0.1
-    Phi_max = 0.5
-    epsilon_min = 0.05
-
-    status = validate_and_display_response(Psi_res.mean(), Delta_Phi, Phi_max, epsilon_min)
-
-    # D-FAKE Filter demo
-    sample_text = "This is a test with ∅≠ valid phase gate marker."
-    filtered_text = D_FAKE_Filter(sample_text)
-
-    print("Phase field update done.")
-    print(f"Validation status: {status}")
-    print(f"D-FAKE filter output: {filtered_text}")
+        # Periodically check coherence
+        if step % 25 == 0:
+            # A 'trajectory_model' would be a complex object in a real simulation
+            # Here we use a placeholder 'None'.
+            coherence_score = check_vector_coherence(Psi_current, trajectory_model=None)
+            print(f"  Step {step+1}/{total_time_steps} | Coherence: {coherence_score:.4f}")
+            
+    # --- Final State ---
+    print("Simulation complete.")
+    final_coherence = check_vector_coherence(Psi_current, trajectory_model=None)
+    print(f"Final state coherence: {final_coherence:.4f}")
