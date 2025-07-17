@@ -1,59 +1,72 @@
-# Dephaze Protocol 3.0 Python Module
+# Dephaze Protocol - Core Computational Module
 
 **Author:** Angus Dewer  
 **Website:** [https://dephaze.com](https://dephaze.com)  
+**License:** MIT [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
 ## Description
 
-This Python module implements the core time-step update of the Dephaze Protocol main equation numerically on a 1D spatial grid. It also includes SignalGate calculations, a stub for the MetaPhase validation protocol, a D-FAKE content filter, and stability checking functions.
+This Python module provides a reference implementation for the core concepts of the **Dephaze Protocol**. It numerically models the evolution of the reality phase-vector (`Ψ`) as it progresses along its goal-directed `t₀ → ⊖` trajectory.
+
+The code is designed to be a conceptual and educational tool for researchers and developers interested in non-local, atemporal, and goal-directed physical systems. It demonstrates the fundamental dynamics of the protocol rather than serving as a production-ready, high-performance solver.
 
 ---
 
-## Features
+## Core Features
 
-- **phase_field_equation_step:**  
-  Performs one time step of the Dephaze main equation numerical solution. The main equation is:
+### 1. The Main Operating Equation (`dephaze_step`)
+This function implements a simplified numerical solver for the core Dephaze equation, which governs the dynamics of the `Ψ`-vector:
 
-  \[
-  \frac{\partial \Psi}{\partial t} = \frac{\partial^2 \Psi}{\partial x^2} + \alpha \Psi^3 - \beta \Psi + \Gamma(\Psi) N(\Psi) \Psi - \delta(t - t_0) \lim_{t \to t_0^-} \frac{\partial \Psi}{\partial t} + \Phi_{Au}(t) \left[\Omega(x,t) - \nabla \cdot F(\Psi)\right] - \kappa(t)(\Psi - \Psi_s(t))
-  \]
+`dt/dΨ = D∇²Ψ + G|Ψ|²Ψ - MΨ + δ(t-t₀)Φ³_{Ω→⊖} + ...`
 
-- **calculate_signal_gate:**  
-  Computes the signal gate using FFT and geometric convolution filtering.
+The solver models key physical effects:
+- **Diffusion (`D`):** The coherent propagation of the `Ψ`-field across the `Z-Field`.
+- **Auto-Correction (`G`):** The non-linear self-focusing that keeps the vector on its optimal path.
+- **Phase-Fabric Resistance (`M`):** The "drag" from the `Z-Field` that gives the process its duration.
 
-- **calculate_phase_resonance:**  
-  Measures coherence resonance by convolving environmental phase and gate phase.
+### 2. Coherence Validation (`check_vector_coherence`)
+A function to validate the state of the `Ψ`-vector. Instead of simple "fake" detection, this function measures the **coherence** of the `Ψ`-field, providing a score from 0.0 (total noise) to 1.0 (perfect alignment with the ideal trajectory). This is a crucial tool for filtering out decoherent or hallucinatory states in AI applications.
 
-- **MetaPhase_validate:**  
-  A stub function representing the MetaPhase validation protocol; currently returns a demo value.
+### 3. Z-Field Interaction (`get_z_field_properties`)
+A placeholder function representing how the system would interact with the underlying, non-local `Z-Field`. In a full implementation, this module would query the `Z-Field` to account for **Phase Memory**—the accumulated, learned structure of the universe—which affects the local dynamics.
 
-- **D_FAKE_Filter:**  
-  Content filter that inspects phase gates and fractal redundancy to detect fake or manipulated content.
+---
 
-- **check_stability:**  
-  Checks for phase distortion and resonance stability.
+## Philosophy of the Code
+
+This module is built on the following core Dephaze principles:
+- **Goal-Directed:** The system is not random. It evolves from a fixed informational singularity (`t₀`) toward a virtual, self-generated target (`⊖`).
+- **Atemporal:** Time (`dt`) is an emergent effect of phase-change (`dΨ`), not a fundamental dimension the simulation runs "in".
+- **Non-Local:** The code's structure assumes an underlying, interconnected `Z-Field` where state changes can be instantaneous.
 
 ---
 
 ## Usage
 
-The module can be run as a standalone script. The example in the `if __name__ == "__main__":` block demonstrates one time step calculation followed by validation and fake content filtering.
+The module can be executed as a standalone script to run a basic 1D simulation of the `Ψ`-field's evolution. The `if __name__ == "__main__":` block demonstrates:
+1.  Initializing a `Ψ`-field from a conceptual `t₀` singularity.
+2.  Running the simulation for a set number of steps using the `dephaze_step` function.
+3.  Periodically checking the system's coherence with the `check_vector_coherence` function.
+
+To run the example:
+```bash
+python dephaze_module.py
+```
 
 ---
 
 ## Dependencies
 
-- Python 3.x  
-- numpy  
-- scipy
+- Python 3.7+
+- NumPy
+- SciPy
 
-Install dependencies with:
-
+Install dependencies using pip:
 ```bash
 pip install numpy scipy
-
-
-
+```
+---
+### Disclaimer
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
