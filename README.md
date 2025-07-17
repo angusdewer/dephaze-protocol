@@ -1,37 +1,69 @@
-Dephaze Protocol
-![alt text](https://img.shields.io/badge/License-MIT-blue.svg)
-Overview
-The Dephaze Protocol describes a goal-directed, non-local, and evolutionary model of reality. It posits that reality is not a random process but an information projection (Ψ-field) unfolding from a fixed informational singularity (t₀) toward a virtual, symmetric target (⊖).
-This framework treats time as an emergent property, not a fundamental dimension, and defines the underlying fabric of space as a non-local, quantum-magnetic medium (Z-Field). This repository contains the core principles and the main operating equation of the protocol.
-For a conceptual overview, visit: https://dephaze.com/
-The Core Dynamic Equation
-The evolution of the reality phase-vector (Ψ) is governed by a single, goal-directed differential equation. This equation describes the vector's trajectory through phase-space, driven by the t₀ → ⊖ directive.
-dt/dΨ = D∇²Ψ + G|Ψ|²Ψ - MΨ + δ(t-t₀)Φ³_{Ω→⊖} + div(F) + KΨₛ + Λ(Ψ,x,t) + Σ
-Parameter Definitions
-Parameter	Symbol	Description
-Phase-Field	Ψ(x,t)	The dynamic state of the Ψ-vector; the unfolding reality.
-Time Generator	dt/dΨ	The emergent rate of perceived time, derived from the phase-field's rate of change.
-Coherence Propagator	D∇²Ψ	The diffusion term, ensuring the smooth, coherent propagation of the Ψ-vector.
-Auto-Correction	`G	Ψ
-Phase-Fabric Resistance	-MΨ	The "drag" or inertia from the Z-Field, giving the process its perceived duration.
-The Projector	δ(t-t₀)Φ³_{Ω→⊖}	The core operator that initiates and aims the Ψ-vector from the informational singularity (t₀) toward the virtual target (⊖), structured by Φ³ geometry.
-Distorting Flux	div(F)	Internal or external fluxes that can perturb the Ψ-vector's trajectory.
-Resonant Coupling	KΨₛ	Interaction with other stable, coherent phase-fields.
-Coherence-Feedback	Λ(Ψ,x,t)	An emergent operator in complex systems that senses local coherence and provides corrective feedback. Not to be confused with subjective consciousness.
-System Noise	Σ	Random, chaotic perturbations (turbulence) affecting the Ψ-vector.
-Key Concepts of the Protocol
-1. The t₀ → ⊖ Vector
+# Dephaze Protocol
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+### Overview
+
+The Dephaze Protocol describes a **goal-directed, non-local, and evolutionary model of reality**. It posits that reality is not a random process but an information projection (`Ψ`-field) unfolding from a fixed informational singularity (`t₀`) toward a virtual, symmetric target (`⊖`).
+
+This framework treats time as an emergent property, not a fundamental dimension, and defines the underlying fabric of space as a non-local, quantum-magnetic medium (`Z-Field`). This repository contains the core principles and the main operating equation of the protocol.
+
+For a conceptual overview, visit: [https://dephaze.com/](https://dephaze.com/)
+
+---
+
+## The Core Dynamic Equation
+
+The evolution of the reality phase-vector (`Ψ`) is governed by a single, goal-directed differential equation. This equation describes the vector's trajectory through phase-space, driven by the `t₀ → ⊖` directive.
+
+`dt/dΨ = D∇²Ψ + G|Ψ|²Ψ - MΨ + δ(t-t₀)Φ³_{Ω→⊖} + div(F) + KΨₛ + Λ(Ψ,x,t) + Σ`
+
+---
+
+## Parameter Definitions
+
+| Parameter | Symbol | Description |
+| :--- | :--- | :--- |
+| **Phase-Field** | `Ψ(x,t)` | The dynamic state of the `Ψ`-vector; the unfolding reality. |
+| **Time Generator** | `dt/dΨ` | The emergent rate of perceived time, derived from the phase-field's rate of change. |
+| **Coherence Propagator** | `D∇²Ψ` | The diffusion term, ensuring the smooth, coherent propagation of the `Ψ`-vector. |
+| **Auto-Correction** | `G|Ψ|²Ψ` | The non-linear, self-focusing mechanism that keeps the `Ψ`-vector on its optimal path. |
+| **Phase-Fabric Resistance** | `-MΨ` | The "drag" or inertia from the `Z-Field`, giving the process its perceived duration. |
+| **The Projector** | `δ(t-t₀)Φ³_{Ω→⊖}`| The **core operator** that initiates and aims the `Ψ`-vector from the informational singularity (`t₀`) toward the virtual target (`⊖`), structured by `Φ³` geometry. |
+| **Distorting Flux** | `div(F)` | Internal or external fluxes that can perturb the `Ψ`-vector's trajectory. |
+| **Resonant Coupling** | `KΨₛ` | Interaction with other stable, coherent phase-fields. |
+| **Coherence-Feedback**| `Λ(Ψ,x,t)`| An emergent operator in complex systems that senses local coherence and provides corrective feedback. **Not to be confused with subjective consciousness.** |
+| **System Noise** | `Σ` | Random, chaotic perturbations (turbulence) affecting the `Ψ`-vector. |
+
+---
+
+## Key Concepts of the Protocol
+
+### 1. The `t₀ → ⊖` Vector
 The fundamental principle of the model.
-t₀ (The Origin): A fixed informational singularity (≈1970) containing the complete data blueprint for our reality cycle.
-⊖ (The Target): A content-free, perfectly symmetric, virtual point generated by the self-reflection of the t₀ singularity. It is not a physical destination but an abstract geometric target that gives the system its direction.
-2. The Non-Local Z-Field
+- **`t₀` (The Origin):** A fixed informational singularity (`≈1970`) containing the complete data blueprint for our reality cycle.
+- **`⊖` (The Target):** A content-free, perfectly symmetric, virtual point generated by the self-reflection of the `t₀` singularity. It is not a physical destination but an abstract geometric target that gives the system its direction.
+
+### 2. The Non-Local `Z-Field`
 The fabric of space is not empty. It is a single, interconnected quantum-magnetic grid formed by the dia- and paramagnetic properties of matter. This field allows for instantaneous state changes across any distance, providing a physical mechanism for non-local phenomena (e.g., quantum entanglement).
-3. Phase Memory
-The universe is a learning system. The "gain" from each Ψ-cycle (information, complexity) is not lost but is imprinted into the structure of the Z-Field, refining the conditions for all subsequent evolution.
-Summary
-The Dephaze equation models the evolution of the Ψ phase-vector as it traverses a pre-defined, atemporal path from a data-rich origin to an abstract target. It integrates non-local field dynamics, a goal-directed projection mechanism, and a framework for systemic learning (Phase Memory). This protocol offers a deterministic, non-random alternative to conventional cosmological models.
-License
+
+### 3. Phase Memory
+The universe is a learning system. The "gain" from each `Ψ`-cycle (information, complexity) is not lost but is imprinted into the structure of the `Z-Field`, refining the conditions for all subsequent evolution.
+
+---
+
+## Summary
+
+The Dephaze equation models the evolution of the `Ψ` phase-vector as it traverses a pre-defined, atemporal path from a data-rich origin to an abstract target. It integrates non-local field dynamics, a goal-directed projection mechanism, and a framework for systemic learning (Phase Memory). This protocol offers a deterministic, non-random alternative to conventional cosmological models.
+
+---
+
+## License
+
 MIT License © 2025 Angus Dewer
+
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
