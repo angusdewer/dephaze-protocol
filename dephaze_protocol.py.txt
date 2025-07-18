@@ -1,10 +1,13 @@
 # ==============================================================================
 # DEPHAZE PROTOCOL - CORE COMPUTATIONAL MODULE
 # Author: Angus Dewer | www.dephaze.com
+# Version: 3.0 (Three-Point Topology Update)
 #
-# Implements the core logic of the Dephaze model, focusing on the
-# goal-directed evolution of the Psi-vector from a fixed informational
-# singularity (t0) toward a virtual, symmetric target (Theta).
+# Implements the core logic of the Dephaze model.
+# This model describes reality as the evolution of a phase-vector (Psi)
+# projected from a fixed informational singularity (Psi_b / t0),
+# guided by a self-generated virtual target (Theta), and oriented
+# by a universal relational equilibrium axis (Omega_0).
 # ==============================================================================
 
 import numpy as np
@@ -15,10 +18,8 @@ from scipy.fft import fft
 
 def dephaze_step(
     Psi,
-    Z_field_properties,
-    t0_singularity,
-    alpha,
-    beta,
+    z_field_properties,
+    projector_operator,
     dt
 ):
     """
@@ -29,91 +30,114 @@ def dephaze_step(
     
     Args:
         Psi (np.array): The current complex-valued state of the Psi-field.
-        Z_field_properties (dict): A dictionary containing the Z-Field's properties,
-                                   e.g., {'D': diffusion_coeff, 'M': resistance_coeff}.
-        t0_singularity (dict): A dictionary defining the projector,
-                               e.g., {'t0': time_origin, 'Phi3': 4.236, 'Omega': initial_vector}.
-        alpha (float): G-term coefficient (self-focusing).
-        beta (float): M-term coefficient (damping from Z-field resistance).
-        dt (float): The time step for this iteration.
+        z_field_properties (dict): Properties of the Z-Field, e.g., {'D': diffusion, 'M': inertia}.
+        projector_operator (dict): The complete source operator definition.
+        dt (float): The time step for this iteration, derived from the state of Psi.
 
     Returns:
-        np.array: The updated Psi-field after the time step dt.
+        np.array: The updated Psi-field.
     """
     dx = 1  # Assuming a normalized grid for simplicity
 
     # --- Dephaze Equation Components ---
 
-    # Diffusion Term (Coherence Propagator)
-    # This term ensures the smooth propagation of the Psi-vector across the Z-Field.
-    D = Z_field_properties.get('D', 1.0)
-    laplacian_Psi = np.zeros_like(Psi, dtype=np.complex128)
-    laplacian_Psi[1:-1] = (Psi[2:] - 2*Psi[1:-1] + Psi[:-2]) / dx**2
+    # Diffusion Term (D*grad^2(Psi)): Coherence Propagator
+    # Ensures the smooth, coherent propagation of the Psi-vector across the Z-Field.
+    D = z_field_properties.get('D', 1.0)
+    laplacian_Psi = (np.roll(Psi, 1) - 2 * Psi + np.roll(Psi, -1)) / dx**2
     diffusion_term = D * laplacian_Psi
 
-    # G-Term (Auto-Correction / Self-Focusing)
-    # This non-linear term keeps the Psi-vector on its optimal t0 -> Theta path.
-    # We use 'alpha' as a simplified representation of 'G'.
-    g_term = alpha * np.abs(Psi)**2 * Psi
+    # G-Term (G*|Psi|^2*Psi): Auto-Correction / Self-Focusing
+    # Non-linear term that keeps the Psi-vector on its optimal trajectory toward Theta.
+    G = projector_operator.get('G_coeff', 1.5)
+    g_term = G * np.abs(Psi)**2 * Psi
 
-    # M-Term (Phase-Fabric Resistance)
-    # Represents the "drag" or inertia from the Z-Field, giving the process its duration.
-    m_term = -beta * Psi
-
-    # TODO: Implement full operator terms (Projector, Lambda, etc.)
-    # For now, these are simplified placeholders.
+    # M-Term (-M*Psi): Phase-Space Inertia
+    # The fundamental "braking force" causing the Psi-vector's deceleration.
+    # This deceleration is perceived as the acceleration of time.
+    M = z_field_properties.get('M', 0.1)
+    m_term = -M * Psi
+    
+    # --- Full Operator Terms (Simplified for this simulation) ---
+    
+    # The Projector term (delta(t-t0)*...) acts only at the initiation (t=t0).
+    # In a continuous simulation, its effect is the initial state of Psi.
+    # For this step-by-step solver, we assume it has already acted.
     projector_term = 0
+    
+    # The Lambda term would be a complex feedback function.
     lambda_term = 0
-    sigma_term = 0
+    
+    # Sigma represents random noise.
+    sigma_term = (np.random.randn(*Psi.shape) + 1j * np.random.randn(*Psi.shape)) * projector_operator.get('Sigma_coeff', 0.01)
+
+    # Other terms (Flux, Coupling) are omitted for clarity.
     div_F_term = 0
     K_term = 0
 
     # Calculate the total change in the Phase-Field
     dPsi = diffusion_term + g_term + m_term + projector_term + lambda_term + sigma_term + div_F_term + K_term
 
-    # Update the Psi-field using a simple Euler step
-    # The actual implementation would use a more stable numerical method.
+    # Update the Psi-field
     Psi_new = Psi + dPsi * dt
 
     return Psi_new
 
-# --- Section 2: Non-Local Z-Field Interaction ---
+# --- Section 2: Foundational Structures ---
 
-def get_z_field_properties(coords):
+def get_z_field_properties(phase_memory):
     """
-    Placeholder function to get local Z-Field properties.
-    In a full implementation, this would query a model of the non-local
-    magnetic tension grid, incorporating Phase Memory.
+    Models the properties of the Non-Local Z-Field.
+    The Z-Field is the quantum-magnetic fabric of space. Its properties
+    (like inertia M) are modified by the accumulated Phase Memory.
     
     Args:
-        coords (tuple): The coordinates (x, y, z) to query.
+        phase_memory (float): A value representing the accumulated "gain" or complexity.
         
     Returns:
-        dict: Properties like diffusion (D) and resistance (M).
+        dict: Properties like diffusion (D) and inertia (M).
     """
-    # For now, return constant values
-    return {'D': 1.0, 'M': 0.1}
+    # Simple model: inertia increases as the system learns/tunes.
+    base_M = 0.1
+    tuned_M = base_M + phase_memory * 0.05
+    return {'D': 1.0, 'M': tuned_M}
+
+def get_time_step(Psi):
+    """
+    Calculates the emergent time step 'dt' from the state of Psi.
+    This implements the dt/dPsi relationship (Time as a Consequence).
+    A simple model: as the field's amplitude (energy) decreases due to inertia,
+    the perceived time step also changes.
+    
+    Args:
+        Psi (np.array): The current state of the Psi-field.
+        
+    Returns:
+        float: The duration of the emergent time step dt.
+    """
+    # Inverse relationship: lower amplitude means larger 'dPsi' for a given 'dt'.
+    # A more complex model would use the rate of change.
+    avg_amplitude = np.mean(np.abs(Psi))
+    return 0.01 / (avg_amplitude + 1e-9) # dt is inversely proportional to amplitude
 
 # --- Section 3: Coherence and Validation ---
 
-def check_vector_coherence(Psi_vector, trajectory_model):
+def check_vector_coherence(Psi, ideal_path_model):
     """
-    Validates the coherence of the Psi-vector against the ideal t0 -> Theta path.
+    Validates the coherence of the Psi-vector against the ideal geometric path.
     A high score indicates the system is on its optimal trajectory.
     
     Args:
-        Psi_vector (np.array): The current state of the Psi-field.
-        trajectory_model (object): A model representing the ideal geometric path.
+        Psi (np.array): The current state of the Psi-field.
+        ideal_path_model (object): A model representing the geometric path (placeholder).
         
     Returns:
-        float: A coherence score between 0.0 (total noise) and 1.0 (perfect coherence).
+        float: A coherence score between 0.0 (noise) and 1.0 (perfect coherence).
     """
-    # This is a stub. A real implementation would involve complex geometric comparison.
-    # For demo, we can use the signal-to-noise ratio as a proxy.
-    signal_power = np.mean(np.abs(Psi_vector)**2)
-    noise_power = np.std(np.angle(Psi_vector))  # Phase noise as a proxy
-    
-    coherence = signal_power / (signal_power + noise_power + 1e-9) # add epsilon to avoid division by zero
+    # Proxy for coherence: ratio of ordered power to total power (signal + noise).
+    signal_power = np.mean(np.abs(Psi))**2
+    total_power = np.mean(np.abs(Psi)**2)
+    coherence = signal_power / (total_power + 1e-9)
     
     return min(max(coherence, 0.0), 1.0)
 
@@ -121,56 +145,59 @@ def check_vector_coherence(Psi_vector, trajectory_model):
 
 if __name__ == "__main__":
     # --- Initialization ---
-    print("Initializing Dephaze Protocol Simulation...")
+    print("Initializing Dephaze Protocol Simulation (v3.0)...")
 
     # Define the spatial grid for our 1D simulation
-    grid_points = 256
-    x = np.linspace(-10, 10, grid_points)
+    grid_points = 512
+    x = np.linspace(-20, 20, grid_points)
 
-    # Initialize the Psi-field (e.g., a Gaussian pulse from the Projector)
-    Psi_initial = np.exp(-x**2) * (1 + 0j)
+    # --- Define the Three-Point Topology (Conceptual) ---
+    # These are atemporal points defining the vector's path.
+    Omega_0_axis = {'time_ref': 1970} # Passive relational anchor
+    Psi_b_singularity = {'time_ref': 1991} # Active informational origin (t0)
+    Theta_target = {'time_ref': 2031} # Virtual, self-generated target
+
+    # --- Define the Projector Operator ---
+    # This operator acts at t0, creating the initial Psi state.
+    initial_Omega_state = np.exp(-x**2) * np.cos(x*0.5) * (1 + 0j) # More complex initial state
     
-    # Define simulation parameters
-    total_time_steps = 100
-    dt = 0.01  # Time step duration
-    
-    # Get Z-Field properties at a sample location
-    # In a real model, this would be position-dependent
-    Z_properties = get_z_field_properties(coords=(0,0,0))
-    
-    # Define core equation parameters
-    alpha_G = 1.5  # Self-focusing coefficient
-    beta_M = Z_properties['M']  # Damping from Z-Field resistance
-    
-    # Define the t0 singularity (conceptual placeholder)
-    t0_singularity_data = {
-        't0': 1970,
-        'Phi3': 4.236,
-        'Omega': Psi_initial # The initial state is the unzipped Omega
+    projector_data = {
+        'G_coeff': 1.5,
+        'Sigma_coeff': 0.01
     }
     
+    # The simulation starts *after* the t0 projection.
+    Psi_current = initial_Omega_state.copy()
+    
     # --- Simulation Loop ---
-    print(f"Running simulation for {total_time_steps} steps...")
-    Psi_current = Psi_initial.copy()
+    print(f"Projecting Psi-vector from t0 ({Psi_b_singularity['time_ref']}) toward Theta ({Theta_target['time_ref']})...")
+    
+    phase_memory_accumulator = 0.0
+    total_steps = 500
 
-    for step in range(total_time_steps):
+    for step in range(total_steps):
+        # The Z-Field's properties evolve based on Phase Memory
+        z_props = get_z_field_properties(phase_memory_accumulator)
+        
+        # The perceived time step is emergent, not constant
+        dt_emergent = get_time_step(Psi_current)
+        
         Psi_current = dephaze_step(
             Psi=Psi_current,
-            Z_field_properties=Z_properties,
-            t0_singularity=t0_singularity_data,
-            alpha=alpha_G,
-            beta=beta_M,
-            dt=dt
+            z_field_properties=z_props,
+            projector_operator=projector_data,
+            dt=dt_emergent
         )
 
+        # Update Phase Memory (the system learns)
+        phase_memory_accumulator += np.mean(np.abs(Psi_current)) * dt_emergent
+
         # Periodically check coherence
-        if step % 25 == 0:
-            # A 'trajectory_model' would be a complex object in a real simulation
-            # Here we use a placeholder 'None'.
-            coherence_score = check_vector_coherence(Psi_current, trajectory_model=None)
-            print(f"  Step {step+1}/{total_time_steps} | Coherence: {coherence_score:.4f}")
+        if step % 100 == 0:
+            coherence = check_vector_coherence(Psi_current, ideal_path_model=None)
+            print(f"  Step {step+1}/{total_steps} | Inertia (M): {z_props['M']:.3f} | Coherence: {coherence:.4f}")
             
     # --- Final State ---
     print("Simulation complete.")
-    final_coherence = check_vector_coherence(Psi_current, trajectory_model=None)
+    final_coherence = check_vector_coherence(Psi_current, ideal_path_model=None)
     print(f"Final state coherence: {final_coherence:.4f}")
