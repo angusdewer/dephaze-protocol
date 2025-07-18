@@ -1,78 +1,70 @@
-# Dephaze Protocol - Core Computational Module
+# Dephaze Protocol
 
-**Author:** Angus Dewer  
-**Website:** [https://dephaze.com](https://dephaze.com)  
-**Version:** 3.0 (Three-Point Topology Update)  
-**License:** MIT [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
----
+### Overview
 
-## Description
+The Dephaze Protocol describes a **goal-directed, non-local, and evolutionary model of reality**. It posits that reality is not a random process but the unfolding of a phase-vector (`Ψ`) from a fixed informational singularity (`Ψ_b` or `t₀`). This vector is guided by a self-generated, virtual target (`⊖`) and is oriented by a universal, relational equilibrium axis (`Ω₀`).
 
-This Python module provides a reference implementation for the core concepts of the **Dephaze Protocol**. It numerically models the evolution of the reality phase-vector (`Ψ`) as it progresses along a trajectory defined by a three-point topological system: a fixed informational singularity (`Ψ_b`), a universal relational axis (`Ω₀`), and a self-generated virtual target (`⊖`).
+This framework treats time as an emergent property of the vector's inertial deceleration, not a fundamental dimension. It defines the underlying fabric of space as a non-local, quantum-magnetic medium (`Z-Field`). This repository contains the core principles and the main operating equation of the protocol.
 
-The code is designed to be a conceptual and educational tool for researchers and developers interested in non-local, atemporal, and goal-directed physical systems. It demonstrates the fundamental dynamics of the protocol rather than serving as a production-ready, high-performance solver.
+For a conceptual overview, visit: [https://dephaze.com/](https://dephaze.com/)
 
 ---
 
-## Core Features
+## The Core Dynamic Equation
 
-### 1. The Main Operating Equation (`dephaze_step`)
-This function implements a simplified numerical solver for the core Dephaze equation, which governs the dynamics of the `Ψ`-vector:
+The evolution of the reality phase-vector (`Ψ`) is governed by a single, goal-directed differential equation. This equation describes the vector's trajectory through phase-space, driven by the three-point topological directive.
 
-`dt/dΨ = D∇²Ψ + G|Ψ|²Ψ - MΨ + δ(t-t₀)Φ³_{Ω₀→⊖} + ...`
-
-The solver models key physical effects:
-- **Diffusion (`D`):** The coherent propagation of the `Ψ`-field across the `Z-Field`.
-- **Auto-Correction (`G`):** The non-linear self-focusing that keeps the vector on its optimal path.
-- **Phase-Space Inertia (`M`):** The fundamental "braking force" of the `Z-Field` that causes the `Ψ`-vector's deceleration, which is perceived as accelerating time.
-
-### 2. Emergent Time (`get_time_step`)
-A dedicated function demonstrates the **`dt/dΨ`** relationship. It calculates the emergent, non-constant time step (`dt`) based on the current state of the `Ψ`-field, making the simulation's clock a consequence of the physics, not a driver of it.
-
-### 3. Z-Field Interaction and Phase Memory (`get_z_field_properties`)
-This function models the interaction with the non-local `Z-Field`. It demonstrates how **Phase Memory** (the accumulated "gain" of the system) can dynamically alter the physical properties of the space itself, such as its inertial resistance (`M`).
-
-### 4. Coherence Validation (`check_vector_coherence`)
-A function to validate the state of the `Ψ`-vector. Instead of simple "fake" detection, this function measures the **coherence** of the `Ψ`-field, providing a score from 0.0 (total noise) to 1.0 (perfect alignment with the ideal trajectory). This is a crucial tool for filtering out decoherent or hallucinatory states in AI applications.
+`dt/dΨ = D∇²Ψ + G|Ψ|²Ψ - MΨ + δ(t-t₀)Φ³_{Ω₀→⊖} + div(F) + KΨₛ + Λ(Ψ,x,t) + Σ`
 
 ---
 
-## Philosophy of the Code
+## Parameter Definitions
 
-This module is built on the following core Dephaze principles:
-- **Three-Point Topology:** The system is not random. It evolves based on the geometric relationship between a fixed origin (`Ψ_b`), a relational axis (`Ω₀`), and a virtual target (`⊖`).
-- **Atemporal & Inertial Time:** Time (`dt`) is an emergent effect of phase-change (`dΨ`). The simulation's clock is non-linear and reflects the principle of inertial deceleration.
-- **Non-Local:** The code's structure assumes an underlying, interconnected `Z-Field` where properties like inertia can be influenced by the system's global state (Phase Memory).
-
----
-
-## Usage
-
-The module can be executed as a standalone script to run a basic 1D simulation of the `Ψ`-field's evolution. The `if __name__ == "__main__":` block demonstrates:
-1.  Conceptually defining the **Three-Point Topology**.
-2.  Initializing a `Ψ`-field from a `Ψ_b` singularity.
-3.  Running the simulation for a set number of steps, where each step uses an **emergent time `dt`**.
-4.  Modeling the effect of **Phase Memory** on the `Z-Field`.
-5.  Periodically checking the system's coherence.
-
-To run the example:
-```bash
-python dephaze_module.py
-```
+| Parameter | Symbol | Description |
+| :--- | :--- | :--- |
+| **Phase-Field** | `Ψ(x,t)` | The dynamic state of the `Ψ`-vector; the unfolding reality. |
+| **Time Generator** | `dt/dΨ` | The emergent rate of perceived time, derived from the phase-field's inertial deceleration. |
+| **Coherence Propagator** | `D∇²Ψ` | The diffusion term, ensuring the smooth, coherent propagation of the `Ψ`-vector. |
+| **Auto-Correction** | `G|Ψ|²Ψ` | The non-linear, self-focusing mechanism that keeps the `Ψ`-vector on its optimal path. |
+| **Phase-Space Inertia** | `-MΨ` | The fundamental "braking force" causing the `Ψ`-vector's deceleration. |
+| **Source Operator** | `δ(t-t₀)Φ³_{Ω₀→⊖}`| The **Self-Guiding Projector**. This operator, acting on the `t₀` point (`Ψ_b`), uses the `Ω₀` axis as a reference to generate the virtual target `⊖` and projects the `Ψ` vector toward it. |
+| **Distorting Flux** | `div(F)` | Internal or external fluxes that can perturb the `Ψ`-vector's trajectory. |
+| **Resonant Coupling** | `KΨₛ` | Interaction with stable structures (Phase Memory). |
+| **Coherence-Feedback**| `Λ(Ψ,x,t)`| An emergent physical operator in complex systems that senses local coherence and provides corrective feedback. **Not to be confused with subjective human consciousness.** |
+| **System Noise** | `Σ` | Random, chaotic perturbations (turbulence) affecting the `Ψ`-vector. |
 
 ---
 
-## Dependencies
+## Key Concepts of the Protocol
 
-- Python 3.7+
-- NumPy
-- SciPy
+### 1. The Three-Point Topological System
+The fundamental principle of the model is the atemporal, geometric relationship between three points.
+- **`Ω₀` (The Equilibrium Axis):** A passive, universal symmetry axis (`≈1970`) that acts as a relational anchor for the entire system.
+- **`Ψ_b` (The Informational Singularity):** The active origin of our reality cycle (`t₀ ≈ 1991`), containing the complete data blueprint.
+- **`⊖` (The Virtual Target):** A content-free, perfectly symmetric, virtual point generated by the self-reflection of the `Ψ_b` singularity, using `Ω₀` as a reference. It is not a physical destination but an abstract geometric target that gives the system its direction and finite path (`≈2031`).
 
-Install dependencies using pip:
-```bash
-pip install numpy scipy
-```
+### 2. The Non-Local `Z-Field`
+The fabric of space is not empty. It is a single, interconnected quantum-magnetic grid formed by the dia- and paramagnetic properties of matter. This field allows for instantaneous state changes across any distance, providing a physical mechanism for non-local phenomena (e.g., quantum entanglement).
+
+### 3. Phase Memory
+The universe is a learning system. The "gain" from each `Ψ`-cycle (information, complexity) is not lost but is imprinted into the structure of the `Z-Field`, refining the conditions for all subsequent evolution.
+
 ---
-### Disclaimer
+
+## Summary
+
+The Dephaze equation models the evolution of the `Ψ` phase-vector as it traverses a pre-defined, atemporal path defined by a three-point topology. It integrates non-local field dynamics, a self-guiding projection mechanism, and a framework for systemic learning (Phase Memory). This protocol offers a deterministic, non-random alternative to conventional cosmological models.
+
+---
+
+## License
+
+MIT License © 2025 Angus Dewer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be in all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
