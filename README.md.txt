@@ -8,7 +8,7 @@ The Dephaze Protocol describes a **goal-directed, non-local, and evolutionary mo
 
 This framework treats time as an emergent property of the vector's inertial deceleration, not a fundamental dimension. It defines the underlying fabric of space as a non-local, quantum-magnetic medium (`Z-Field`). This repository contains the core principles and the main operating equation of the protocol.
 
-For a conceptual overview, visit: [https://dephaze.com/](https://dephaze.com/)
+For a conceptual overview, visit: [https://dephaze.eu/](https://dephaze.eu/)
 
 ---
 
