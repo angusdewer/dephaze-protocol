@@ -1,6 +1,6 @@
 # ==============================================================================
 # DEPHAZE PROTOCOL - CORE COMPUTATIONAL MODULE
-# Author: Angus Dewer | www.dephaze.com
+# Author: Angus Dewer | www.dephaze.eu
 # Version: 3.0 (Three-Point Topology Update)
 #
 # Implements the core logic of the Dephaze model.
