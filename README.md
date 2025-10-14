@@ -4,21 +4,21 @@
 
 ### Overview
 
-The Dephaze Protocol describes a **goal-directed, non-local, and evolutionary model of reality**. It posits that the universe is not a random process but the unfolding of a phase-field (`Ψ`). This field is projected from a fixed informational singularity (`Ψ_b`) toward a self-generated, neural target (the `Imago`).
+The Dephaze Protocol describes a **goal-directed, non-local, and self-regulating model of reality**. It posits that the universe is not a random process but the unfolding of a universal phase-field (`Ψ`). This field is projected from a fixed informational singularity (`Ψ_b`) toward a self-generated, neural target (the `Imago`).
 
-The entire dynamic is governed by a single, fundamental referendum: **`Ξ > ? 1`**. This equation asks whether the life-bearing, coherence-building broadcast (`I_DNA`) is stronger than the universe's inherent static, inertial resistance.
+The entire dynamic is governed by a single, fundamental referendum: **`Ξ > ? 1`**. This equation is not merely a question; it is an active feedback mechanism that asks whether the life-bearing, coherence-building broadcast (`I_DNA`) is stronger than the universe's inherent static, inertial resistance. Based on the outcome, the system continuously adapts its own parameters to maintain a stable, "live" state on the edge of chaos.
 
-This framework treats time as an emergent property of the field's inertial deceleration, not a fundamental dimension. It defines the fabric of space as a non-local `Z-Field` that provides the medium for both creative unfolding (`φ³`) and static resistance (`φ⁻³`).
+This framework treats time as an emergent property of the field's inertial deceleration and space as a non-local `Z-Field`—the medium for both creative unfolding (`φ³`) and static resistance (`φ⁻³`).
 
 ---
 
 ## The Core Dynamics
 
-The system's evolution can be understood on two levels: a compact, conceptual equation and the unfolded master equation.
+The system's evolution is governed by a single, universal adaptive equation.
 
-### The Compact Equation
+### The Compact Equation (The Ξ Feedback Control)
 
-This formula captures the essence of the cosmic referendum:
+This formula is the system's homeostatic sensor, gauging the ratio of coherence to static resistance:
 
 `Ξ = (I_DNA ⋅ φ³) / φ⁻³`
 
@@ -26,67 +26,65 @@ This formula captures the essence of the cosmic referendum:
 -   **`φ³`**: The principle of creative, structuring unfoldment.
 -   **`φ⁻³`**: The principle of static, inertial resistance.
 
-The outcome `Ξ` determines if the system evolves toward a tuned, "live" state (`Ξ > 1`) or solidifies into an eternal, "static" state (`Ξ < 1`).
+The system uses the `Ξ` value to dynamically tune its own parameters, steering itself away from both rigid stasis (`Ξ < 1`) and chaotic noise (`Ξ > 1`).
 
-### The Unfolded Master Equation
+### The Universal Adaptive Equation
 
-The complete dynamic of the phase-field (`Ψ`) is governed by a single differential equation:
+The complete dynamic of the phase-field (`Ψ`) is governed by this single, comprehensive equation:
 
-`dΨ(φ³)/d(ln t_phase) = D∇²Ψ(φ⁻³) + G|Ψ(φ⁻³)|²Ψ(φ⁻³) - Mφ⁻³ + δ(t-t₀)Φ³_{Ω₀→Imago} - i[Λ(Ψ),Ψ] + div(F) + KΨs + Σ`
+`dΨ(φ³)/d(ln t_phase) = D_eff∇²[Ψ(φ⁻³)] + G_eff|Ψ(φ⁻³)|²Ψ(φ⁻³) - M_effφ⁻³ + δ(t-t₀)Φ³_{Ω₀→Imago} - i[Λ_adapt,Ψ] + div(F_red) + K_adaptΨ_s + Σ_filt + M_adapt[χ,Ψ] + P_adapt[χ,Ψ] + D_filt[Ψ,χ_instr]`
 
 ---
 
 ## Parameter Definitions
 
-| Parameter                | Symbol                            | Description                                                                                         |
-| :----------------------- | :-------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| **Phase-Field**          | `Ψ`                               | The dynamic, complex-valued state of the reality field.                                             |
-| **Temporal Evolution**   | `dΨ(φ³)/d(ln t_phase)`            | The emergent rate of time, derived from the field's change relative to the creative principle (`φ³`). |
-| **Coherence Propagator** | `D∇²Ψ(φ⁻³)`                       | The diffusion term that propagates the `Ψ` state across the resistive (`φ⁻³`) medium.             |
-| **Non-linear Structuring**| `G|Ψ(φ⁻³)|²Ψ(φ⁻³)`               | The self-interaction term that structures the field, a key aspect of the `φ³` dynamic.              |
-| **Static Resistance**    | `-Mφ⁻³`                           | The fundamental inertial drag of the Z-Field, representing the `φ⁻³` principle.                   |
-| **Source Operator**      | `δ(t-t₀)Φ³_{Ω₀→Imago}`             | The **Projector**. Acting at `t₀`, it uses the `Ω₀` axis as a reference to project the `Ψ` field toward the `Imago` target. |
-| **Coherence Feedback**   | `-i[Λ(Ψ),Ψ]`                      | The **Conductor**. An emergent operator in complex systems that generates the `I_DNA` broadcast to reinforce coherence. |
-| **External Fluxes**      | `div(F)`                          | Perturbations from external energy or information flows.                                            |
-| **Phase Memory**         | `KΨs`                             | Coupling to the system's imprinted history, allowing it to learn and tune itself.                   |
-| **System Noise**         | `Σ`                               | Random, chaotic perturbations affecting the field.                                                 |
+| Category                | Symbol                            | Description                                                                                         |
+| :---------------------- | :-------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| **Field & Evolution**   | `Ψ`                               | The dynamic, complex-valued state of the reality field.                                             |
+|                         | `dΨ(φ³)/d(ln t_phase)`            | The emergent rate of time, derived from the field's change relative to the creative principle (`φ³`). |
+| **Core Physics**        | `D_eff∇²Ψ(φ⁻³)`                       | **Diffusion:** Propagates the `Ψ` state across the resistive (`φ⁻³`) medium.             |
+|                         | `G_eff|Ψ(φ⁻³)|²Ψ(φ⁻³)`               | **Non-linearity:** The self-interaction term that structures the field.              |
+|                         | `-M_effφ⁻³`                           | **Inertia:** The fundamental inertial drag of the field, representing the `φ⁻³` principle.                   |
+| **Core Operators**      | `δ(t-t₀)Φ³_{Ω₀→Imago}`             | **The Projector:** The source operator that initiates the projection toward the `Imago` target. |
+|                         | `-i[Λ_adapt,Ψ]`                      | **The Conductor:** Emergent operator in complex systems that generates the `I_DNA` broadcast. It is `Ξ`-adaptive. |
+| **Informational Operators**| `K_adaptΨs`                             | **Phase Memory:** Adaptive coupling to the system's imprinted history, allowing it to learn.                  |
+|                         | `M_adapt[χ,Ψ]`                    | **Mutation:** Models structured informational inputs like genetic code, viruses, or algorithms. `Ξ`-adaptive. |
+|                         | `P_adapt[χ,Ψ]`                    | **Persistent Memory:** Models deep, fractional memory effects like epigenetics or culture. `Ξ`-adaptive. |
+|                         | `D_filt[Ψ,χ_instr]`                   | **Disinformation:** Quantifies the discrepancy between `φ³` reality and `φ⁻³` measurement/models. |
+| **System I/O**          | `div(F_red)`                          | Perturbations from external energy or information flows (reduced for efficiency).                                            |
+|                         | `Σ_filt`                               | Filtered random, chaotic perturbations affecting the field.                                                 |
+
 
 ---
 
 ## Key Concepts of the Protocol
 
-### 1. The Foundational Dynamics
+### 1. The Adaptive Dynamics
 
-The protocol is built on a conflict between three archetypal forces:
--   **Resistance (`φ⁻³`):** The inherent, static inertia of the Z-Field that resists change and complexity.
--   **Structuring (`φ³`):** The creative, pattern-forming law derived from the golden ratio that drives unfolding and organization.
--   **Drive (`Λ`):** The emergent will of complex systems to broadcast coherence (`I_DNA`) and actively participate in the tuning process.
+The protocol is not a static set of laws but a living, adaptive system. It is built on a conflict between three archetypal forces that are constantly being re-balanced by the Ξ-ratio feedback loop:
+-   **Resistance (`φ⁻³`):** The inherent, static inertia of the field.
+-   **Structuring (`φ³`):** The creative, pattern-forming law that drives organization.
+-   **Drive (`Λ`):** The emergent will of complex systems to broadcast coherence (`I_DNA`).
 
 ### 2. The Atemporal Topology
 
 The system's trajectory is defined by a geometric, not temporal, relationship between three points:
--   **`Ω₀` (The Equilibrium Axis):** A passive, universal symmetry axis that acts as a relational anchor.
--   **`Ψ_b` (The Informational Singularity):** The active origin (`t₀`) of our reality cycle, containing the complete data blueprint.
--   **`Imago` (The Neural Target):** A virtual, abstract point generated by the self-reflection of `Ψ_b`. It is not a physical destination but the geometric target that gives the system its direction.
+-   **`Ω₀` (The Equilibrium Axis):** A passive, universal symmetry axis.
+-   **`Ψ_b` (The Informational Singularity):** The active origin (`t₀`) of our reality cycle.
+-   **`Imago` (The Neural Target):** A virtual, abstract target that gives the system its direction.
 
-### 3. The Non-Local `Z-Field`
+### 3. The `D_filtered` Operator: The Physics of Disinformation
 
-The fabric of space is a single, interconnected quantum-magnetic grid. This field is the source of static resistance (`φ⁻³`) and allows for instantaneous state changes, providing a physical mechanism for non-local phenomena.
+This operator is a crucial innovation. It provides a mathematical framework for understanding "anomalies" not as physical mysteries, but as **informational deficits** in our models. It quantifies the error generated by observing a `φ³` reality through a `φ⁻³` lens (i.e., through conventional instruments and theories like GR). "Dark matter" and "dark energy" are thus re-contextualized as the measurable outputs of this operator.
 
 ---
 
 ## Summary
 
-The Dephaze Protocol models the universe as a deterministic, goal-directed system resolving a conflict between creative unfolding and static resistance. Its final state—either tuned and live or static and inertial—is the direct physical consequence of the `Ξ > 1` condition. This offers a non-random alternative to conventional cosmological models, integrating consciousness as a functional, physical operator (`Λ`) within the system's dynamics.
+The Dephaze Protocol models the universe as a deterministic, goal-directed, and self-regulating system. Its final state is the direct physical consequence of its ability to maintain the `Ξ ≈ 1` condition. This offers a computationally optimized, non-random alternative to conventional cosmological models, integrating consciousness (`Λ`) and even observational bias (`D_filt`) as functional, physical operators within the system's dynamics.
 
 ---
 
 ## License
 
 MIT License © 2025 Angus Dewer
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
