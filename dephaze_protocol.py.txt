@@ -1,203 +1,166 @@
 # ==============================================================================
-# DEPHAZE PROTOCOL - CORE COMPUTATIONAL MODULE
+# DEPHAZE PROTOCOL - ADAPTIVE COMPUTATIONAL ENGINE
 # Author: Angus Dewer | dephaze.io
-# Version: 4.0 (Conceptual Alignment Update)
+# Version: 5.0 (Self-Regulating Framework)
 #
-# Implements the core logic of the Dephaze model.
-# This model describes reality as the evolution of a phase-vector (Psi)
-# projected from an informational singularity (Psi_b) toward a self-generated
-# neural target (Imago). The dynamic is a contest between creative unfolding
-# (φ³) and static, inertial resistance (φ⁻³). The outcome (Ξ) determines
-# the final state of the universe.
+# Implements the adaptive logic of the Universal Dephaze Equation.
+# This engine simulates reality as a self-regulating phase-field (Psi) that
+# dynamically adapts its parameters based on its own coherence state (Xi).
+# It models not just physics, but the interaction with informational fields (Chi)
+# through Mutation, Memory, and Disinformation operators.
 # ==============================================================================
 
 import numpy as np
+from scipy.signal import convolve
+from scipy.special import gamma as gamma_func
 
-# --- Section 1: The Core Dynamic Equation Solver ---
+# --- Section 1: The Adaptive Dephaze Engine ---
 
-def dephaze_step(
-    Psi,
-    z_field_properties,
-    dynamics_constants,
-    dt
-):
+class DephazeEngine:
     """
-    Performs one time step update of the reality Phase-Field (Psi) vector.
-    This function implements the core Dephaze master equation.
-    
-    Args:
-        Psi (np.array): The current complex-valued state of the Psi-field.
-        z_field_properties (dict): Properties of the Z-Field, primarily Inertia (M), representing φ⁻³.
-        dynamics_constants (dict): Constants governing the system's dynamics (G, Sigma).
-        dt (float): The emergent time step for this iteration.
-
-    Returns:
-        np.array: The updated Psi-field.
+    An engine to simulate the evolution of the adaptive Dephaze phase-field.
     """
-    dx = 1  # Assuming a normalized grid
-
-    # --- Dephaze Equation Components ---
-
-    # Diffusion Term (D*∇²Ψ): Coherence Propagator
-    # Ensures the smooth propagation of the Psi-vector across the Z-Field.
-    D = z_field_properties.get('D', 1.0)
-    laplacian_Psi = (np.roll(Psi, 1) - 2 * Psi + np.roll(Psi, -1)) / dx**2
-    diffusion_term = D * laplacian_Psi
-
-    # G-Term (G*|Ψ|²Ψ): Structuring / Self-Focusing
-    # Part of the creative unfolding (φ³) dynamic that keeps the Psi-vector
-    # on its optimal trajectory toward the Imago.
-    G = dynamics_constants.get('G_coeff', 1.5)
-    g_term = G * np.abs(Psi)**2 * Psi
-
-    # M-Term (-M*Ψ): Static Resistance (φ⁻³)
-    # The fundamental inertial drag causing the Psi-vector's deceleration.
-    # This deceleration is perceived as the flow of time.
-    M = z_field_properties.get('M', 0.1)
-    m_term = -M * Psi
-    
-    # --- Full Operator Terms (Simplified for this simulation) ---
-    
-    # The Projector term (δ(t-t₀)*Φ³...) acts only at the initiation.
-    # In a continuous simulation, its effect is the initial state of Psi,
-    # which we assume has already been set.
-    projector_term = 0
-    
-    # The Lambda term ([Λ,Ψ]) represents Coherence Feedback from complex systems.
-    # This is the operator that generates the I_DNA broadcast.
-    # It is omitted in this baseline simulation for clarity.
-    lambda_term = 0
-    
-    # Sigma represents random system noise.
-    sigma_coeff = dynamics_constants.get('Sigma_coeff', 0.01)
-    sigma_term = (np.random.randn(*Psi.shape) + 1j * np.random.randn(*Psi.shape)) * sigma_coeff
-
-    # Other terms (External Flux, Phase Memory Coupling) are omitted.
-    div_F_term = 0
-    K_term = 0
-
-    # Calculate the total change in the Phase-Field
-    dPsi = diffusion_term + g_term + m_term + projector_term + lambda_term + sigma_term + div_F_term + K_term
-
-    # Update the Psi-field
-    Psi_new = Psi + dPsi * dt
-
-    return Psi_new
-
-# --- Section 2: Foundational Structures ---
-
-def get_z_field_properties(phase_memory):
-    """
-    Models the properties of the Non-Local Z-Field.
-    The Z-Field is the fabric of space, source of the static resistance (φ⁻³).
-    Its properties, like inertia (M), are modified by accumulated Phase Memory.
-    
-    Args:
-        phase_memory (float): A value representing the system's accumulated complexity.
+    def __init__(self, grid_points=512):
+        self.grid_points = grid_points
+        self.x = np.linspace(-20, 20, grid_points)
         
-    Returns:
-        dict: Properties including diffusion (D) and inertia (M).
-    """
-    # Simple model: inertia increases as the system "tunes" itself.
-    base_M = 0.1
-    tuned_M = base_M + phase_memory * 0.05
-    return {'D': 1.0, 'M': tuned_M}
-
-def get_time_step(Psi):
-    """
-    Calculates the emergent time step 'dt' from the state of Psi.
-    This implements the TEMPORALITY relation: d(φ³)/dΨ. Time is a consequence, not a cause.
-    
-    Args:
-        Psi (np.array): The current state of the Psi-field.
+        # --- Core State Fields ---
+        self.Psi = np.exp(-self.x**2) * np.cos(self.x * 0.5) * (1 + 0j) # Initial Psi state
+        self.Chi_genetic = np.sin(self.x * 2) * 0.1 # Example local info field (e.g., DNA)
+        self.Chi_instrument = np.random.randn(grid_points) * 0.05 # Example instrument noise profile
         
-    Returns:
-        float: The duration of the emergent time step dt.
-    """
-    # A simple model: as the field's amplitude (energy) decreases due to inertia,
-    # the perceived phase-time step changes.
-    avg_amplitude = np.mean(np.abs(Psi))
-    return 0.01 / (avg_amplitude + 1e-9)
-
-# --- Section 3: Coherence and Validation ---
-
-def check_coherence(Psi):
-    """
-    Calculates the coherence of the Psi-vector. This serves as a computational
-    proxy for the Symphony value (Ξ). A high score is analogous to Ξ > 1.
-    
-    Args:
-        Psi (np.array): The current state of the Psi-field.
+        # --- Adaptive Parameters (will be tuned by Xi) ---
+        self.mu = 0.01  # Mutation rate
+        self.gamma = 0.01 # Persistent memory weight
         
-    Returns:
-        float: A coherence score between 0.0 (noise) and 1.0 (perfect coherence).
-    """
-    # A proxy for coherence: ratio of ordered power to total power.
-    signal_power = np.mean(np.abs(Psi))**2
-    total_power = np.mean(np.abs(Psi)**2)
-    coherence = signal_power / (total_power + 1e-9)
-    
-    return min(max(coherence, 0.0), 1.0)
+        # --- Fixed Constants ---
+        self.D_eff = 1.0
+        self.G_eff = 1.5
+        self.M_eff = 0.1
+        self.Sigma_coeff = 0.01
+        self.K_mem_coeff = 0.02
+        
+        # --- State Variables ---
+        self.phase_memory = np.zeros_like(self.Psi)
+        self.Xi_ratio = 1.0
+
+    def dephaze_step(self, dt):
+        """
+        Performs one adaptive time step of the Universal Dephaze Equation.
+        """
+        dx = self.x[1] - self.x[0]
+
+        # --- Core Physics Terms (from previous model) ---
+        laplacian_Psi = (np.roll(self.Psi, 1) - 2 * self.Psi + np.roll(self.Psi, -1)) / dx**2
+        diffusion_term = self.D_eff * laplacian_Psi
+        g_term = self.G_eff * np.abs(self.Psi)**2 * self.Psi
+        m_term = -self.M_eff * self.Psi
+        
+        # --- New Adaptive and Informational Operators ---
+        
+        # Adaptive Coherence Feedback (Lambda) - simplified as a damping term
+        lambda_term = - (1.0 - self.Xi_ratio) * self.Psi * 0.1
+
+        # Adaptive Phase Memory (K_mem,adapt)
+        memory_term = self.K_mem_coeff * self.phase_memory
+
+        # Filtered System Noise (Sigma_filtered)
+        noise = (np.random.randn(*self.Psi.shape) + 1j * np.random.randn(*self.Psi.shape))
+        sigma_term = noise * self.Sigma_coeff * (1 / (self.Xi_ratio + 0.1)) # More noise in low coherence
+
+        # Adaptive Mutation (M_adapt)
+        mutation_term = self.mu * self.Chi_genetic * self.Psi
+
+        # Adaptive Persistent Memory (P_adapt)
+        # Simplified as a weighted self-interaction
+        persistent_memory_term = self.gamma * np.abs(self.Chi_genetic)**2 * self.Psi
+
+        # Filtered Disinformation (D_filtered)
+        # The core of this is the difference between φ³ and φ⁻³ views
+        psi_phi3_proxy = self.Psi # The "real" field
+        psi_phi_minus_3_proxy = np.real(self.Psi) # The "measured" part
+        disinformation_source = psi_phi3_proxy - psi_phi_minus_3_proxy
+        disinformation_term = np.tanh(np.abs(disinformation_source)) * self.Chi_instrument
+
+        # --- Calculate Total Change ---
+        dPsi = (diffusion_term + g_term + m_term + 
+                lambda_term + memory_term + sigma_term +
+                mutation_term + persistent_memory_term + disinformation_term)
+
+        # Update Psi
+        self.Psi += dPsi * dt
+        
+        # Update Phase Memory (a simple decay model)
+        self.phase_memory = self.phase_memory * 0.95 + self.Psi * dt
+
+    def update_adaptive_params(self):
+        """
+        Implements the Xi-Ratio Feedback Loop to regulate the system.
+        """
+        self.Xi_ratio = self.calculate_xi_proxy()
+        
+        if self.Xi_ratio < 0.95: # Trending towards static state
+            # Increase openness
+            self.mu *= 1.05
+            self.gamma *= 1.05
+        elif self.Xi_ratio > 1.05: # Trending towards chaotic state
+            # Decrease openness, stabilize
+            self.mu *= 0.95
+            self.gamma *= 0.95
+        
+        # Clamp parameters to avoid explosion
+        self.mu = min(self.mu, 0.1)
+        self.gamma = min(self.gamma, 0.1)
+
+    def calculate_xi_proxy(self):
+        """
+        A proxy for the Xi ratio (coherence).
+        Ratio of ordered power to total power.
+        """
+        signal_power = np.mean(np.abs(self.Psi))**2
+        total_power = np.mean(np.abs(self.Psi)**2)
+        coherence = signal_power / (total_power + 1e-9)
+        return min(max(coherence, 0.0), 1.0) / 0.5 # Normalize so ~1 is the target
+
+    def get_emergent_dt(self):
+        """
+        Calculates the emergent time step from the state of Psi.
+        """
+        avg_amplitude = np.mean(np.abs(self.Psi))
+        return 0.01 / (avg_amplitude + 1e-9)
+        
+    def run_simulation(self, steps=500):
+        """
+        Runs the full adaptive simulation.
+        """
+        print("Initializing Dephaze Adaptive Engine (v5.0)...")
+        print(f"Projecting Psi-vector from 'Informational Singularity' toward 'Imago Target'...")
+        
+        for step in range(steps):
+            # 1. Calculate emergent time step for this iteration
+            dt = self.get_emergent_dt()
+            
+            # 2. Evolve the Psi field using all operators
+            self.dephaze_step(dt)
+            
+            # 3. Update adaptive parameters based on the new state
+            self.update_adaptive_params()
+            
+            # 4. Monitor and log
+            if step % 100 == 0:
+                disinformation_magnitude = np.mean(np.abs(self.Chi_instrument * (self.Psi - np.real(self.Psi))))
+                print(f"  Step {step+1}/{steps} | Xi Ratio: {self.Xi_ratio:.3f} | Mu: {self.mu:.4f} | Disinfo: {disinformation_magnitude:.5f}")
+
+        print("\nSimulation complete.")
+        final_xi = self.calculate_xi_proxy()
+        outcome = "Live / Tuned (Ξ ≈ 1)" if 0.9 < final_xi < 1.1 else "Static or Chaotic"
+        
+        print(f"Final State Coherence (Xi Proxy): {final_xi:.4f}")
+        print(f"Determined Outcome: {outcome}")
 
 # --- Example Usage ---
 
 if __name__ == "__main__":
-    # --- Initialization ---
-    print("Initializing Dephaze Protocol Simulation (v4.0)...")
-
-    # Define the spatial grid for our 1D simulation
-    grid_points = 512
-    x = np.linspace(-20, 20, grid_points)
-
-    # --- Define the Atemporal Topology ---
-    Omega_0_axis = "Relational Equilibrium Anchor"
-    Psi_b_singularity = "Informational Origin (t₀)"
-    Imago_target = "Self-Generated Neural Target"
-
-    # --- Define Dynamics Constants ---
-    # The initial state is set by the Projector Operator at t₀.
-    initial_Psi_state = np.exp(-x**2) * np.cos(x*0.5) * (1 + 0j)
-    
-    dynamics_constants = {
-        'G_coeff': 1.5,
-        'Sigma_coeff': 0.01
-    }
-    
-    # The simulation begins *after* the t₀ projection has occurred.
-    Psi_current = initial_Psi_state.copy()
-    
-    # --- Simulation Loop ---
-    print(f"Projecting Psi-vector from '{Psi_b_singularity}' toward '{Imago_target}'...")
-    
-    phase_memory_accumulator = 0.0
-    total_steps = 500
-
-    for step in range(total_steps):
-        # The Z-Field's properties evolve based on Phase Memory
-        z_props = get_z_field_properties(phase_memory_accumulator)
-        
-        # The perceived time step is emergent, not constant
-        dt_emergent = get_time_step(Psi_current)
-        
-        Psi_current = dephaze_step(
-            Psi=Psi_current,
-            z_field_properties=z_props,
-            dynamics_constants=dynamics_constants,
-            dt=dt_emergent
-        )
-
-        # Update Phase Memory (the system learns/tunes)
-        phase_memory_accumulator += np.mean(np.abs(Psi_current)) * dt_emergent
-
-        # Periodically check coherence
-        if step % 100 == 0:
-            coherence_proxy_Ξ = check_coherence(Psi_current)
-            print(f"  Step {step+1}/{total_steps} | Inertia (M): {z_props['M']:.3f} | Coherence (Proxy for Ξ): {coherence_proxy_Ξ:.4f}")
-            
-    # --- Final State ---
-    print("\nSimulation complete.")
-    final_coherence = check_coherence(Psi_current)
-    final_state_is_live = "Live / Tuned (Ξ > 1)" if final_coherence > 0.5 else "Static / Inertial (Ξ < 1)"
-    
-    print(f"Final State Coherence: {final_coherence:.4f}")
-    print(f"Determined Outcome: {final_state_is_live}")
+    # Create and run the engine
+    engine = DephazeEngine()
+    engine.run_simulation(total_steps=1000)
