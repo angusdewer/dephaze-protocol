@@ -162,8 +162,7 @@ System monitors Ξ and adapts toward Ξ ≈ 1.
 (If Ξ < 1: boost φ³; If Ξ > 1: stabilize φ⁻³)
 }
 
-yaml
-Kód másolása
+
 
 These axioms are not metaphors — they define the **minimal generative rules** from which measurable reality emerges.
 
