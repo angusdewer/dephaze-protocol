@@ -1,4 +1,4 @@
-# DEPHAZE — Phase-Field Theory of Reality
+# DEPHAZE — Phase-Field Theory of Reality - www.dephaze.eu
 
 [![License: Permission Required](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
 
