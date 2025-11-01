@@ -1,21 +1,27 @@
-# DEPHAZE — Phase-Field Theory of Reality - www.dephaze.eu
+<!--
+Dephaze Framework — A self-regulating, non-local phase-field theory of reality.
+Author: Angus Dewer | © 1992–2025 Dephaze Manufacture | License: Permission Required.
+-->
 
-[![License: Permission Required](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
+# DEPHAZE — Phase-Field Theory of Reality  
+[www.dephaze.eu](https://www.dephaze.eu)
+
+[![License: Permission Required](https://img.shields.io/badge/License-Dephaze%20Restricted-red.svg)](#dephaze-license--permission-required)
 
 ---
 
 ## Overview
 
 **Dephaze** describes a **goal-directed, non-local, and self-regulating field** from which observable reality (`Ψ`) unfolds.  
-It replaces the notion of random, law-driven evolution with an **adaptive projection process**:  
+It replaces random, law-driven evolution with an **adaptive projection process**:  
 a timeless equilibrium (`Ω₀`) continuously unfolds toward a self-generated target configuration (`Imago`) through the creative operator (`Φ³`).
 
 The central dynamic is measured by the **coherence ratio**:
 
+```text
 Ξ = φ³ / φ⁻³
 
-ruby
-Kód másolása
+ 
 
 - **Ξ > 1** → Evolution (generation dominates)  
 - **Ξ ≈ 1** → Critical balance (maximal complexity)  
@@ -60,8 +66,7 @@ Dephaze models reality as a **continuous projection** from a timeless, symmetric
 
 dΨ/dt = Diffusion + Interaction − Resistance + Projection
 
-yaml
-Kód másolása
+ 
 
 **Where:**
 
@@ -84,8 +89,7 @@ D∇²[Ψ(φ⁻³)] + G|Ψ(φ⁻³)|²Ψ(φ⁻³) − Mφ⁻³
 
 M[χ,Ψ] + P[χ,Ψ] + D[Ψ,χ_instr]
 
-ruby
-Kód másolása
+ 
 
 **Core Components**
 
