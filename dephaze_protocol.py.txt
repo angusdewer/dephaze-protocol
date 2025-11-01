@@ -1,166 +1,144 @@
 # ==============================================================================
-# DEPHAZE PROTOCOL - ADAPTIVE COMPUTATIONAL ENGINE
+# DEPHAZE VISUAL ENGINE v5.1
 # Author: Angus Dewer | dephaze.io
-# Version: 5.0 (Self-Regulating Framework)
-#
-# Implements the adaptive logic of the Universal Dephaze Equation.
-# This engine simulates reality as a self-regulating phase-field (Psi) that
-# dynamically adapts its parameters based on its own coherence state (Xi).
-# It models not just physics, but the interaction with informational fields (Chi)
-# through Mutation, Memory, and Disinformation operators.
+# Date: 2025
+# ------------------------------------------------------------------------------
+# Visual, self-regulating implementation of the Dephaze Master Equation.
+# Demonstrates the adaptive Ξ ≈ 1 self-tuning behavior of the phase-field Ψ.
 # ==============================================================================
 
 import numpy as np
-from scipy.signal import convolve
-from scipy.special import gamma as gamma_func
+import matplotlib.pyplot as plt
 
-# --- Section 1: The Adaptive Dephaze Engine ---
+# ---------------------------------------------------------------------------
+# Adaptive Dephaze Engine Class
+# ---------------------------------------------------------------------------
 
-class DephazeEngine:
-    """
-    An engine to simulate the evolution of the adaptive Dephaze phase-field.
-    """
+class DephazeVisualEngine:
     def __init__(self, grid_points=512):
         self.grid_points = grid_points
         self.x = np.linspace(-20, 20, grid_points)
-        
-        # --- Core State Fields ---
-        self.Psi = np.exp(-self.x**2) * np.cos(self.x * 0.5) * (1 + 0j) # Initial Psi state
-        self.Chi_genetic = np.sin(self.x * 2) * 0.1 # Example local info field (e.g., DNA)
-        self.Chi_instrument = np.random.randn(grid_points) * 0.05 # Example instrument noise profile
-        
-        # --- Adaptive Parameters (will be tuned by Xi) ---
-        self.mu = 0.01  # Mutation rate
-        self.gamma = 0.01 # Persistent memory weight
-        
-        # --- Fixed Constants ---
+
+        # --- Core Field ---
+        self.Psi = np.exp(-self.x**2) * np.cos(self.x * 0.5) * (1 + 0j)
+        self.phase_memory = np.zeros_like(self.Psi)
+
+        # --- Informational Fields ---
+        self.Chi_genetic = np.sin(self.x * 2) * 0.1
+        self.Chi_instrument = np.random.randn(grid_points) * 0.05
+
+        # --- Adaptive Parameters ---
+        self.mu = 0.01   # Mutation
+        self.gamma = 0.01  # Persistent memory
         self.D_eff = 1.0
         self.G_eff = 1.5
         self.M_eff = 0.1
         self.Sigma_coeff = 0.01
         self.K_mem_coeff = 0.02
-        
-        # --- State Variables ---
-        self.phase_memory = np.zeros_like(self.Psi)
+
+        # --- Xi-Coherence State ---
         self.Xi_ratio = 1.0
+        self.history_xi = []
 
-    def dephaze_step(self, dt):
-        """
-        Performs one adaptive time step of the Universal Dephaze Equation.
-        """
+    # -----------------------------------------------------------------------
+    def step(self, dt):
+        """One adaptive integration step of the Dephaze Equation"""
         dx = self.x[1] - self.x[0]
+        laplacian_Psi = (np.roll(self.Psi, 1) - 2*self.Psi + np.roll(self.Psi, -1)) / dx**2
+        diffusion = self.D_eff * laplacian_Psi
+        interaction = self.G_eff * np.abs(self.Psi)**2 * self.Psi
+        resistance = -self.M_eff * self.Psi
 
-        # --- Core Physics Terms (from previous model) ---
-        laplacian_Psi = (np.roll(self.Psi, 1) - 2 * self.Psi + np.roll(self.Psi, -1)) / dx**2
-        diffusion_term = self.D_eff * laplacian_Psi
-        g_term = self.G_eff * np.abs(self.Psi)**2 * self.Psi
-        m_term = -self.M_eff * self.Psi
-        
-        # --- New Adaptive and Informational Operators ---
-        
-        # Adaptive Coherence Feedback (Lambda) - simplified as a damping term
-        lambda_term = - (1.0 - self.Xi_ratio) * self.Psi * 0.1
+        # Adaptive Coherence Feedback (Λ)
+        lambda_term = -(1.0 - self.Xi_ratio) * self.Psi * 0.1
 
-        # Adaptive Phase Memory (K_mem,adapt)
+        # Phase Memory
         memory_term = self.K_mem_coeff * self.phase_memory
 
-        # Filtered System Noise (Sigma_filtered)
-        noise = (np.random.randn(*self.Psi.shape) + 1j * np.random.randn(*self.Psi.shape))
-        sigma_term = noise * self.Sigma_coeff * (1 / (self.Xi_ratio + 0.1)) # More noise in low coherence
+        # Filtered Noise
+        noise = (np.random.randn(*self.Psi.shape) + 1j*np.random.randn(*self.Psi.shape))
+        sigma_term = noise * self.Sigma_coeff * (1 / (self.Xi_ratio + 0.1))
 
-        # Adaptive Mutation (M_adapt)
-        mutation_term = self.mu * self.Chi_genetic * self.Psi
+        # Mutation and Persistent Memory
+        mutation = self.mu * self.Chi_genetic * self.Psi
+        persistent = self.gamma * np.abs(self.Chi_genetic)**2 * self.Psi
 
-        # Adaptive Persistent Memory (P_adapt)
-        # Simplified as a weighted self-interaction
-        persistent_memory_term = self.gamma * np.abs(self.Chi_genetic)**2 * self.Psi
+        # Disinformation Operator
+        phi3_proxy = self.Psi
+        phi_minus3_proxy = np.real(self.Psi)
+        disinfo = np.tanh(np.abs(phi3_proxy - phi_minus3_proxy)) * self.Chi_instrument
 
-        # Filtered Disinformation (D_filtered)
-        # The core of this is the difference between φ³ and φ⁻³ views
-        psi_phi3_proxy = self.Psi # The "real" field
-        psi_phi_minus_3_proxy = np.real(self.Psi) # The "measured" part
-        disinformation_source = psi_phi3_proxy - psi_phi_minus_3_proxy
-        disinformation_term = np.tanh(np.abs(disinformation_source)) * self.Chi_instrument
+        dPsi = diffusion + interaction + resistance + lambda_term \
+               + memory_term + sigma_term + mutation + persistent + disinfo
 
-        # --- Calculate Total Change ---
-        dPsi = (diffusion_term + g_term + m_term + 
-                lambda_term + memory_term + sigma_term +
-                mutation_term + persistent_memory_term + disinformation_term)
-
-        # Update Psi
         self.Psi += dPsi * dt
-        
-        # Update Phase Memory (a simple decay model)
         self.phase_memory = self.phase_memory * 0.95 + self.Psi * dt
 
-    def update_adaptive_params(self):
-        """
-        Implements the Xi-Ratio Feedback Loop to regulate the system.
-        """
-        self.Xi_ratio = self.calculate_xi_proxy()
-        
-        if self.Xi_ratio < 0.95: # Trending towards static state
-            # Increase openness
-            self.mu *= 1.05
-            self.gamma *= 1.05
-        elif self.Xi_ratio > 1.05: # Trending towards chaotic state
-            # Decrease openness, stabilize
-            self.mu *= 0.95
-            self.gamma *= 0.95
-        
-        # Clamp parameters to avoid explosion
-        self.mu = min(self.mu, 0.1)
-        self.gamma = min(self.gamma, 0.1)
+    # -----------------------------------------------------------------------
+    def update_params(self):
+        """Self-regulating Xi feedback"""
+        self.Xi_ratio = self.calc_xi()
+        if self.Xi_ratio < 0.95:
+            self.mu *= 1.05; self.gamma *= 1.05
+        elif self.Xi_ratio > 1.05:
+            self.mu *= 0.95; self.gamma *= 0.95
+        self.mu = min(self.mu, 0.1); self.gamma = min(self.gamma, 0.1)
+        self.history_xi.append(self.Xi_ratio)
 
-    def calculate_xi_proxy(self):
-        """
-        A proxy for the Xi ratio (coherence).
-        Ratio of ordered power to total power.
-        """
-        signal_power = np.mean(np.abs(self.Psi))**2
-        total_power = np.mean(np.abs(self.Psi)**2)
-        coherence = signal_power / (total_power + 1e-9)
-        return min(max(coherence, 0.0), 1.0) / 0.5 # Normalize so ~1 is the target
+    # -----------------------------------------------------------------------
+    def calc_xi(self):
+        """Proxy for coherence ratio Xi = φ³/φ⁻³"""
+        sig = np.mean(np.abs(self.Psi))**2
+        tot = np.mean(np.abs(self.Psi)**2)
+        return min(max(sig/(tot+1e-9)/0.5, 0.0), 2.0)
 
-    def get_emergent_dt(self):
-        """
-        Calculates the emergent time step from the state of Psi.
-        """
-        avg_amplitude = np.mean(np.abs(self.Psi))
-        return 0.01 / (avg_amplitude + 1e-9)
-        
-    def run_simulation(self, steps=500):
-        """
-        Runs the full adaptive simulation.
-        """
-        print("Initializing Dephaze Adaptive Engine (v5.0)...")
-        print(f"Projecting Psi-vector from 'Informational Singularity' toward 'Imago Target'...")
-        
+    def emergent_dt(self):
+        return 0.01 / (np.mean(np.abs(self.Psi)) + 1e-9)
+
+    # -----------------------------------------------------------------------
+    def run(self, steps=500, visualize=True):
+        print("Launching DEPHAZE VISUAL ENGINE v5.1 ...")
+        plt.ion()
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,6))
+        line_real, = ax1.plot(self.x, np.real(self.Psi), color='cyan', lw=1)
+        line_imag, = ax1.plot(self.x, np.imag(self.Psi), color='magenta', lw=0.8)
+        ax1.set_title("Ψ field (real and imaginary)")
+        ax1.set_xlim(-20,20)
+        ax1.set_ylim(-1,1)
+        ax1.set_facecolor("#0a0e14")
+
+        line_xi, = ax2.plot([], [], color='yellow')
+        ax2.set_title("Ξ ratio evolution")
+        ax2.set_xlim(0, steps)
+        ax2.set_ylim(0, 2)
+        ax2.set_xlabel("Step")
+        ax2.set_ylabel("Ξ")
+
         for step in range(steps):
-            # 1. Calculate emergent time step for this iteration
-            dt = self.get_emergent_dt()
-            
-            # 2. Evolve the Psi field using all operators
-            self.dephaze_step(dt)
-            
-            # 3. Update adaptive parameters based on the new state
-            self.update_adaptive_params()
-            
-            # 4. Monitor and log
-            if step % 100 == 0:
-                disinformation_magnitude = np.mean(np.abs(self.Chi_instrument * (self.Psi - np.real(self.Psi))))
-                print(f"  Step {step+1}/{steps} | Xi Ratio: {self.Xi_ratio:.3f} | Mu: {self.mu:.4f} | Disinfo: {disinformation_magnitude:.5f}")
+            dt = self.emergent_dt()
+            self.step(dt)
+            self.update_params()
 
-        print("\nSimulation complete.")
-        final_xi = self.calculate_xi_proxy()
-        outcome = "Live / Tuned (Ξ ≈ 1)" if 0.9 < final_xi < 1.1 else "Static or Chaotic"
-        
-        print(f"Final State Coherence (Xi Proxy): {final_xi:.4f}")
-        print(f"Determined Outcome: {outcome}")
+            if visualize and step % 5 == 0:
+                line_real.set_ydata(np.real(self.Psi))
+                line_imag.set_ydata(np.imag(self.Psi))
+                line_xi.set_data(range(len(self.history_xi)), self.history_xi)
+                plt.pause(0.001)
 
-# --- Example Usage ---
+        plt.ioff()
+        final_xi = self.Xi_ratio
+        print(f"\nSimulation complete.\nFinal Ξ = {final_xi:.3f}")
+        if 0.9 < final_xi < 1.1:
+            print("→ Coherent / Live (Ξ ≈ 1)")
+        elif final_xi <= 0.9:
+            print("→ Static / Frozen state")
+        else:
+            print("→ Chaotic / Overdriven state")
+        plt.show()
 
+# ---------------------------------------------------------------------------
+# Run Demonstration
+# ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Create and run the engine
-    engine = DephazeEngine()
-    engine.run_simulation(total_steps=1000)
+    engine = DephazeVisualEngine(grid_points=512)
+    engine.run(steps=800)
