@@ -61,6 +61,12 @@ AXIOM_4: SELF REGULATION
 System adapts toward Ξ ≈ 1
 (Ξ < 1 → boost φ³; Ξ > 1 → stabilize φ⁻³)
 
+ AXIOM_5: OCCAM_SELECTOR
+    When multiple Ψ configurations satisfy coherence,
+    the system selects the minimal topological order N
+    where ∂(Complexity)/∂Ψ = 0.
+    
+
 ------------------------------------------------------------
 EMPIRICAL CONTEXT
 ------------------------------------------------------------
