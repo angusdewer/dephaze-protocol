@@ -257,6 +257,11 @@ DEPHAZE_CORE_AXIOMS
 
   AXIOM_4: SELF_REGULATION
     System adapts toward Ξ ≈ 1
+
+  AXIOM_5: OCCAM_SELECTOR
+    When multiple Ψ configurations satisfy coherence,
+    the system selects the minimal topological order N
+    where ∂(Complexity)/∂Ψ = 0.
 }
 
 Using ONLY these axioms and your transformer core architecture,
