@@ -191,7 +191,7 @@ This is **not** a claim to "solve" consciousness, but a framework for modeling a
 
 ---
 
-## The Five Axioms
+## The six Axioms
 ```text
 DEPHAZE_CORE_AXIOMS
 {
@@ -226,6 +226,12 @@ DEPHAZE_CORE_AXIOMS
     (If Ξ < 1: boost φ³; If Ξ > 1: stabilize φ⁻³)
     
     Self-organized criticality emerges naturally, not through fine-tuning.
+
+ AXIOM_5: OCCAM_SELECTOR
+    When multiple Ψ configurations satisfy coherence,
+    the system selects the minimal topological order N
+    where ∂(Complexity)/∂Ψ = 0.
+    (Nature always collapses to the simplest viable Φ³ spiral configuration.)
 }
 ```
 
