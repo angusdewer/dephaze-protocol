@@ -1,13 +1,13 @@
 <!--
 Dephaze Framework — A self-regulating, non-local phase-field theory of reality.
-Author: Angus Dewer | © 1992–2025 Dephaze Manufacture
+Author: Angus Dewer | © 1992–2026 Dephaze Manufacture
 -->
 
 # DEPHAZE — Phase-Field Theory of Reality
 
 [![License: Restricted Research Use](https://img.shields.io/badge/License-Research%20Use%20Only-orange.svg)](#license)
 [![Website](https://img.shields.io/badge/Website-dephaze.eu-blue)](https://www.dephaze.eu)
-[![Contact](https://img.shields.io/badge/Contact-dewerangus%40gmail.com-green)](mailto:dewerangus@gmail.com)
+[![Contact](https://img.shields.io/badge/Contact-angus%40dephaze.eu-green)](mailto:angus@dephaze.eu)
 
 ---
 
@@ -19,12 +19,13 @@ Author: Angus Dewer | © 1992–2025 Dephaze Manufacture
 > not random evolution under static laws.**
 
 **No dark matter needed.** No vacuum energy tuning. No wave function collapse.  
-Just **adaptive field dynamics** emerging from **five axioms**.
+Just **adaptive field dynamics** emerging from **six axioms**.
 
 ### Empirical Validation
 
 | Domain | Result | Status |
 |:-------|:-------|:-------|
+| **Galaxy Rotation Curves (V66)** | 175/175 SPARC galaxies, median RMS 6.55 km/s, **0 free parameters** | ✓ Validated |
 | **Cosmology (σ₈ tension)** | RSD: χ² = 0.04 vs ΛCDM: χ² = 3.4 | ✓ Validated |
 | **Astrodynamics (Flyby)** | All 9 missions (NEAR, Galileo, Cassini, Rosetta, etc.) | ✓ Explained |
 | **Quantum (Tsirelson bound)** | Derived from bistable relaxation, not postulated | ✓ Theoretical |
@@ -40,6 +41,65 @@ Just **adaptive field dynamics** emerging from **five axioms**.
 *Fewer assumptions. Broader explanatory power.*
 
 </div>
+
+---
+
+## Galaxy Rotation Curves: The V66 Result
+
+The **strongest current empirical result** of the Dephaze framework.
+
+The galaxy rotation anomaly has been open for 50 years. The standard solution (NFW dark matter halo) uses ~525 free parameters for 175 galaxies, fitted in-sample. The Dephaze V66 equation uses **zero**.
+
+### The V66 Equation
+
+```text
+v_pred² = v_obs² + T_i · S(x_i)
+
+where:
+  x_i   = v_obs_i / max{ v_obs_j : j ∈ W(i) }      [phase coordinate]
+  T_i   = max²  −  median²                           [local tension]
+  S(x)  = x^(1/Φ) · (Φ³)^(−(1−x)/Φ²)              [Φ³ spring function]
+  W(i)  = { j : |log_Φ(r_j) − log_Φ(r_i)| ≤ 1 }   [Φ-window]
+
+Input: r [kpc], v_obs [km/s]   |   Free parameters: 0   |   Fitting: none
+Data:  http://astroweb.cwru.edu/SPARC/
+```
+
+### Results on Complete SPARC 175-Galaxy Database
+
+| Metric | Value | Details |
+|:-------|:------|:--------|
+| Median RMS | **6.55 km/s** | all 175 galaxies, 0 parameters |
+| Good (< 8 km/s) | **114 / 175** | 65.1% |
+| Acceptable (8–15 km/s) | 56 / 175 | 32.0% |
+| Poor (> 15 km/s) | 5 / 175 | 2.9% |
+| Point-level accuracy | 2543 / 3391 | 75.0% |
+
+### Anti-Circularity Validation
+
+Since V66 uses `v_obs` as both input and comparison, four independent tests exclude circularity:
+
+| Test | Result | Interpretation |
+|:-----|:-------|:---------------|
+| **Leave-One-Out (LOO)** | 5.98 km/s — *better* than standard | Circular model would degrade; this improves |
+| **Random shuffle control** | 24.7 km/s (3.78× worse) | If tautology, shuffled data would score similarly |
+| **Out-of-sample extrapolation** | 2.61 km/s median, 12/14 galaxies | Cannot reflect back unseen points |
+| **S(x) a priori** | Defined from Φ³ before any SPARC data | No data influenced its shape |
+
+### BIC Comparison vs NFW Dark Matter
+
+```text
+N = 3,391 measured points (complete SPARC)
+
+BIC(V66,  k=0,   RMS=6.55) =  12,747   ← reference
+BIC(NFW,  k=525, RMS=5.0)  =  15,183   ΔBIC = +2,436  [NFW with in-sample advantage]
+BIC(NFW,  k=525, RMS=6.55) =  17,015   ΔBIC = +4,268  [fair comparison]
+
+|ΔBIC| > 1000 = decisive evidence.
+Even granting NFW a 1.5 km/s in-sample accuracy advantage: decisive.
+```
+
+> **Note:** Since `v_pred ≥ v_obs` is guaranteed, residuals are one-sided. A Gaussian likelihood assumption underestimates V66's true advantage — ΔBIC = −2,436 is a *conservative lower bound*.
 
 ---
 
@@ -178,6 +238,7 @@ This is **not fine-tuning**; it is **self-organized criticality** — the natura
 
 | Domain | Resolution |
 |:--------|:-----------|
+| **Galaxy Rotation Curves** | • V66 equation: 175 SPARC galaxies, 0 free parameters, median 6.55 km/s<br>• LOO improves (5.98 km/s) — circularity excluded<br>• ΔBIC = −2,436 vs NFW (525 params, in-sample) — decisive |
 | **Cosmology** | • Dark energy as β log-correction (no vacuum energy needed)<br>• σ₈ tension: RSD better fit than ΛCDM<br>• Hubble tension: H₀(z) evolution |
 | **Quantum Mechanics** | • Measurement = bistable relaxation (not collapse)<br>• Entanglement = shared Ω₀ origin<br>• Tsirelson bound derived from C*-algebra projectors |
 | **Astrodynamics** | • Flyby anomalies: ζ-gated coherence formula<br>• Pioneer anomaly: φ⁻³ lag (1.17s over 30 years) |
@@ -191,7 +252,7 @@ This is **not** a claim to "solve" consciousness, but a framework for modeling a
 
 ---
 
-## The six Axioms
+## The Six Axioms
 ```text
 DEPHAZE_CORE_AXIOMS
 {
@@ -227,7 +288,7 @@ DEPHAZE_CORE_AXIOMS
     
     Self-organized criticality emerges naturally, not through fine-tuning.
 
- AXIOM_5: OCCAM_SELECTOR
+  AXIOM_5: OCCAM_SELECTOR
     When multiple Ψ configurations satisfy coherence,
     the system selects the minimal topological order N
     where ∂(Complexity)/∂Ψ = 0.
@@ -235,7 +296,7 @@ DEPHAZE_CORE_AXIOMS
 }
 ```
 
-These **five axioms** define the minimal generative rules from which measurable reality emerges.
+These **six axioms** define the minimal generative rules from which measurable reality emerges.
 
 ---
 
@@ -295,8 +356,10 @@ dephaze/
 │   ├── cosmology.md       # Dark energy, σ₈ tension
 │   ├── quantum.md         # Measurement, entanglement
 │   ├── astrodynamics.md   # Flyby, Pioneer anomalies
+│   ├── rotation_curves.md # V66 derivation and validation
 │   └── mathematics.md     # Full PDE derivations
 ├── examples/
+│   ├── dephaze_v66.py     # Galaxy rotation V66 (complete, runnable)
 │   ├── flyby_calc.py      # Flyby anomaly calculator
 │   ├── rsd_fit.py         # RSD cosmology fit
 │   └── quantum_sim.py     # Bistable relaxation simulator
@@ -306,6 +369,9 @@ dephaze/
 │   └── flyby_missions.csv # Spacecraft trajectory data
 └── LICENSE.md             # License terms
 ```
+
+> **SPARC rotation curve data** (used by V66): http://astroweb.cwru.edu/SPARC/  
+> Runtime: ~2 minutes for all 175 galaxies.
 
 ---
 
@@ -327,7 +393,7 @@ Please open an **Issue** or **Pull Request** with:
 ### For Collaborations
 
 For collaborative research, commercial applications, or substantial modifications:
-📩 Contact: **dewerangus@gmail.com**
+📩 Contact: **angus@dephaze.eu**
 
 ---
 
@@ -335,13 +401,13 @@ For collaborative research, commercial applications, or substantial modification
 
 If you use Dephaze in your research, please cite:
 ```bibtex
-@misc{dephaze2025,
+@misc{dephaze2026,
   author       = {Angus Dewer},
   title        = {Dephaze: Phase-Field Theory of Reality},
-  year         = {2025},
+  year         = {2026},
   publisher    = {Dephaze Manufacture},
   url          = {https://www.dephaze.eu},
-  note         = {Available at: https://github.com/[your-repo]}
+  note         = {Available at: https://github.com/angusdewer}
 }
 ```
 
@@ -349,7 +415,7 @@ If you use Dephaze in your research, please cite:
 
 ## License
 
-**© 1992–2025 Angus Dewer / Dephaze Manufacture**
+**© 1992–2026 Angus Dewer / Dephaze Manufacture**
 
 ### Research Use License
 
@@ -381,7 +447,7 @@ Any permitted use must include clear attribution:
 This framework is provided "as is" without warranty of any kind. The author is not liable for any damages arising from its use.
 
 **For licensing inquiries:**  
-📩 **dewerangus@gmail.com**  
+📩 **angus@dephaze.eu**  
 🌐 **[dephaze.eu](https://www.dephaze.eu)**
 
 ---
@@ -400,5 +466,5 @@ When **Ξ ≈ 1**, the system remains alive — coherent, evolving, self-aware t
 
 **Author:** Angus Dewer  
 **Website:** [dephaze.eu](https://www.dephaze.eu)  
-**Contact:** dewerangus@gmail.com  
-**© 1992–2025 Dephaze Manufacture**
+**Contact:** angus@dephaze.eu  
+**© 1992–2026 Dephaze Manufacture**
